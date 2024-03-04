@@ -1,0 +1,15 @@
+{
+  "name": "obsidian-browser-interface-extension",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.1.4",
+    "vite-plugin-chrome-extension": "^0.0.7"
+  }
+}

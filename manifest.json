@@ -1,0 +1,25 @@
+{
+  "name": "Obsidian Browser Interface Extension",
+  "description": "A browser interface for saving windows to Obsidian.",
+  "manifest_version": 3,
+  "version": "0.1.0",
+  "icons": {
+    "16": "./icons/icon16.png",
+    "48": "./icons/icon48.png",
+    "128": "./icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Obsidian Browser Interface",
+    "default_icon": "./icons/icon16.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "./background.js"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "permissions": ["tabs", "tabGroups"],
+  "minimum_chrome_version": "88"
+}
