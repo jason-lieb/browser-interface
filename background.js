@@ -19,15 +19,15 @@ export function getDirectoryHandle() {
 
     openRequest.onupgradeneeded = function() {
       const db = openRequest.result
-      if (!db.objectStoreNames.contains('directoryHandle')) {
-        db.createObjectStore('directoryHandle', {autoIncrement: true})
+      if (!db.objectStoreNames.contains('DirectoryHandle')) {
+        db.createObjectStore('DirectoryHandle', {autoIncrement: true})
       }
     }
 
     openRequest.onsuccess = function() {
       const db = openRequest.result
-      const transaction = db.transaction('directoryHandle', 'readonly')
-      const objectStore = transaction.objectStore('directoryHandle')
+      const transaction = db.transaction('DirectoryHandle', 'readonly')
+      const objectStore = transaction.objectStore('DirectoryHandle')
       const getRequest = objectStore.get(1)
 
       getRequest.onsuccess = function() {

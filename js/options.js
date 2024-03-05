@@ -10,8 +10,8 @@ async function selectDirectory() {
 
       openRequest.onsuccess = function() {
         const db = openRequest.result
-        const transaction = db.transaction('directoryHandle', 'readwrite')
-        const objectStore = transaction.objectStore('directoryHandle')
+        const transaction = db.transaction('DirectoryHandle', 'readwrite')
+        const objectStore = transaction.objectStore('DirectoryHandle')
         const addRequest = objectStore.add(directoryHandle)
 
         addRequest.onsuccess = function() {
