@@ -1,4 +1,4 @@
-export function getDirectoryHandle() {
+export function getDirectoryHandle(): Promise<FileSystemDirectoryHandle | undefined> {
   return new Promise((resolve, reject) => {
     const openRequest = indexedDB.open('DirectoryHandle', 1)
 

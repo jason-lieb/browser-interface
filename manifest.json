@@ -14,7 +14,7 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "service_worker": "./js/background.js"
+    "service_worker": "./src/background.ts"
   },
   "options_ui": {
     "page": "options.html",
