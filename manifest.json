@@ -10,11 +10,10 @@
   },
   "action": {
     "default_title": "Obsidian Browser Interface",
-    "default_icon": "./icons/icon16.png",
-    "default_popup": "popup.html"
+    "default_icon": "./icons/icon16.png"
   },
   "background": {
-    "service_worker": "./src/background.ts"
+    "service_worker": "src/background.ts"
   },
   "options_ui": {
     "page": "options.html",

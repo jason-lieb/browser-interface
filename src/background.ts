@@ -1,14 +1,18 @@
-import {getDirectoryHandle} from './utils/background/get-directory-handle'
+// import {getDirectoryHandle} from './utils/background/get-directory-handle'
 
-init()
+// init()
 
-async function init() {
-  const existingDirectoryHandle = await getDirectoryHandle()
-  if (existingDirectoryHandle === undefined) {
-    chrome.runtime.openOptionsPage()
-  } else {
-  }
-}
+chrome.action.onClicked.addListener(() => {
+  chrome.runtime.openOptionsPage()
+})
+
+// async function init() {
+//   const existingDirectoryHandle = await getDirectoryHandle()
+//   if (existingDirectoryHandle === undefined) {
+//     chrome.runtime.openOptionsPage()
+//   } else {
+//   }
+// }
 
 // chrome.runtime.onMessage.addListener(handleIncomingMessages)
 // chrome.runtime.onInstalled.addListener(createTab)
