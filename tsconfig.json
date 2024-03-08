@@ -10,7 +10,8 @@
     "allowJs": true,
     "checkJs": false,
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": "./",
+    "jsx": "react-jsx",
     "removeComments": true,
     "noEmit": true,
     "importHelpers": true,
@@ -20,5 +21,5 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "service-worker/background.ts"]
 }

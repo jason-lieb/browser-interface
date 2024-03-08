@@ -6,11 +6,6 @@
 //   const existingDirectoryHandle = await getDirectoryHandle()
 //   if (existingDirectoryHandle === undefined) return chrome.runtime.openOptionsPage()
 
-//   document.querySelector('#clear-directory-button')?.addEventListener('click', () => {
-//     indexedDB.deleteDatabase('DirectoryHandle')
-//     chrome.runtime.openOptionsPage()
-//   })
-
 //   const input = document.querySelector('#input') as HTMLInputElement
 //   document.querySelector('#save-button')?.addEventListener('click', async () => {
 //     console.log('test', input?.value)
@@ -39,13 +34,3 @@
 // //   }
 // //   return {fileHandles, directoryNames, directoryHandles}
 // // }
-
-// declare global {
-//   interface FileSystemDirectoryHandle {
-//     entries: () => AsyncIterableIterator<[string, FileSystemFileHandle | FileSystemDirectoryHandle]>
-//     requestPermission: (input?: {mode: 'read' | 'readwrite'}) => string
-//     queryPermission: () => string
-//   }
-// }
-
-// export {}

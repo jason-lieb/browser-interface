@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link type="text/css" rel="stylesheet" href="css/pico.min.css" />
-    <link type="text/css" rel="stylesheet" href="css/options.css" />
-    <script src="src/options.ts" type="module"></script>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./icons/icon16.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Obsidian Browser Interface</title>
+
+    <link type="text/css" rel="stylesheet" href="src/pico.min.css" />
+    <link type="text/css" rel="stylesheet" href="src/app.css" />
   </head>
 
   <body>
-    <div id="select-directory">
-      <button id="select-directory-button">Select Directory</button>
-      <input type="text" id="input" />
-      <button id="test">Test</button>
-    </div>
+    <div id="root"></div>
+    <script src="src/main.tsx" type="module"></script>
   </body>
 </html>
