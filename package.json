@@ -5,9 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "./scripts/build.sh && vite build",
+    "build": "vite build",
     "preview": "vite preview",
-    "setup": "chmod +x ./scripts/build.sh",
     "check": "tsc --noEmit"
   },
   "devDependencies": {
