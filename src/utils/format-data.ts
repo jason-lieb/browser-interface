@@ -19,7 +19,7 @@ type Tab = {
 export function formatWindow(window: chrome.windows.Window): Window {
   const {alwaysOnTop, id} = window
   const tabs = window.tabs?.map(formatTab)
-  tabs?.pop() // Remove the last tab, which is the Chrome extension tab
+  tabs?.filter(tab => tab.url !== 'chrome-extension://')
   return {
     alwaysOnTop,
     id,
