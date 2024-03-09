@@ -3,8 +3,8 @@ import {jsonToMarkdown} from './markdown'
 
 export async function saveWindow(directoryHandle: FileSystemDirectoryHandle, inputText: string) {
   const window = await chrome.windows.getCurrent({populate: true})
-  if (window.id === undefined) return
-  const tabs = formatTabs(window.tabs as chrome.tabs.Tab[])
+  if (window.id === undefined || window.tabs === undefined) return
+  const tabs = formatTabs(window.tabs)
 
   const formattedInputText = inputText.trim().split('/')
   const fileName = formattedInputText.pop()

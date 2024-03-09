@@ -9,11 +9,4 @@ export default defineConfig({
       input: 'manifest.json',
     },
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        quietDeps: true,
-      },
-    },
-  },
 })
