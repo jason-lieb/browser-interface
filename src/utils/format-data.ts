@@ -1,43 +1,18 @@
-type Window = {
-  alwaysOnTop: boolean
-  id: number | undefined
-  tabs: Tab[] | undefined
-}
-
-type Tab = {
-  active: boolean
+export type Tab = {
   favIconUrl: string | undefined
-  groupId: number
-  id: number | undefined
-  index: number
-  pinned: boolean
   title: string | undefined
   url: string | undefined
-  windowId: number
 }
 
-export function formatWindow(window: chrome.windows.Window): Window {
-  const {alwaysOnTop, id} = window
-  const tabs = window.tabs?.map(formatTab)
-  tabs?.filter(tab => tab.url !== 'chrome-extension://')
-  return {
-    alwaysOnTop,
-    id,
-    tabs,
-  }
+export function formatTabs(tabs: chrome.tabs.Tab[]): Tab[] {
+  return tabs?.filter(tab => tab.url?.split('://')[0] !== 'chrome-extension').map(formatTab)
 }
 
 function formatTab(tab: chrome.tabs.Tab): Tab {
-  const {active, favIconUrl, groupId, id, index, pinned, title, url, windowId} = tab
+  const {favIconUrl, title, url} = tab
   return {
-    active,
     favIconUrl,
-    groupId,
-    id,
-    index,
-    pinned,
     title,
     url,
-    windowId,
   }
 }
