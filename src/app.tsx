@@ -21,20 +21,28 @@ export default function App() {
     <div id="container">
       {directoryHandle ? (
         <>
-          <p>Directory: {directoryHandle.name}</p>
-          <button onClick={() => clearDirectory(setDirectoryHandle)}>Clear Directory</button>
-          <input
-            type="text"
-            value={inputText}
-            onChange={e => setInputText((e.target as HTMLInputElement).value)}
-          />
-          <button onClick={() => saveWindow(directoryHandle, inputText)}>Save Window</button>
+          <div className="row">
+            <p>
+              <b>Directory: </b>
+              {directoryHandle.name}
+            </p>
+            <button onClick={() => clearDirectory(setDirectoryHandle)}>Clear Directory</button>
+          </div>
+          <div className="row">
+            <label htmlFor="inputText">File Path: </label>
+            <input
+              id="inputText"
+              type="text"
+              value={inputText}
+              onChange={e => setInputText((e.target as HTMLInputElement).value)}
+            />
+          </div>
+          <button onClick={() => saveWindow(directoryHandle, inputText)} className="save">
+            Save Window
+          </button>
         </>
       ) : (
-        <>
-          <p>No directory selected</p>
-          <button onClick={() => selectDirectory(setDirectoryHandle)}>Select Directory</button>
-        </>
+        <button onClick={() => selectDirectory(setDirectoryHandle)}>Select Directory</button>
       )}
     </div>
   )

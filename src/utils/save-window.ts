@@ -2,6 +2,7 @@ import {formatTabs} from './format-data'
 import {jsonToMarkdown} from './markdown'
 
 export async function saveWindow(directoryHandle: FileSystemDirectoryHandle, inputText: string) {
+  if (inputText.trim() === '') return alert('Please enter a file path')
   const window = await chrome.windows.getCurrent({populate: true})
   if (window.id === undefined || window.tabs === undefined) return
   const tabs = formatTabs(window.tabs)

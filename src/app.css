@@ -6,10 +6,38 @@ body {
 }
 
 #container {
-  width: 250px;
+  width: 25rem;
   text-align: center;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  max-height: 3rem;
+}
+
+.save {
+  max-width: 25rem;
+}
+
+label {
+  font-size: 1rem;
 }
 
 input {
   text-align: center;
+  max-width: 20rem;
+  margin-bottom: 0 !important;
+}
+
+p {
+  margin-bottom: 0 !important;
+}
+
+button {
+  max-width: 10rem;
+  margin-bottom: 0 !important;
 }
