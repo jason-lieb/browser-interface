@@ -1,26 +1,39 @@
 import {Tab} from './format-data'
 
-export function jsonToMarkdown(tabs: Tab[]): string {
-  const headers = ['`BUTTON[browser-interface-extension]`', 'Tabs']
-  let markdown = '| ' + headers.join(' | ') + ' |'
+type Column = '`BUTTON[browser-interface-extension-open-window]`' | 'Tabs' | 'Open' | 'Delete'
 
-  markdown += '\n| ' + headers.map(() => '---').join(' | ') + ' |\n'
+export function jsonToMarkdown(tabs: Tab[]): {headers: string; content: string} {
+  const columns: Column[] = [
+    '`BUTTON[browser-interface-extension-open-window]`',
+    'Tabs',
+    'Open',
+    'Delete',
+  ]
+  let headers = '| ' + columns.join(' | ') + ' |'
+
+  headers += '\n| ' + columns.map(() => '---').join(' | ') + ' |\n'
+
+  let content = ''
 
   for (const tab of tabs) {
-    const row = headers.map(extractDataFromTab(tab)).join(' | ')
-    markdown += '| ' + row + ' |\n'
+    const row = columns.map(extractDataFromTab(tab)).join(' | ')
+    content += '| ' + row + ' |\n'
   }
 
-  return markdown
+  return {headers, content}
 }
 
-function extractDataFromTab(tab: Tab): (header: string) => string {
-  return function(header: string) {
+function extractDataFromTab(tab: Tab): (header: Column) => string {
+  return function(header: Column) {
     switch (header) {
-      case '`BUTTON[browser-interface-extension]`':
+      case '`BUTTON[browser-interface-extension-open-window]`':
         return `![favicon](${tab.favIconUrl})`
       case 'Tabs':
         return `[${tab.title ?? ''}](${tab.url})`
+      case 'Open':
+        return '`BUTTON[browser-interface-extension-open-tab]`'
+      case 'Delete':
+        return '`BUTTON[browser-interface-extension-delete-tab]`'
       default:
         throw new Error('Impossible')
     }

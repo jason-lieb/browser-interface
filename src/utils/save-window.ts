@@ -5,21 +5,38 @@ export async function saveWindow(directoryHandle: FileSystemDirectoryHandle, inp
   const window = await chrome.windows.getCurrent({populate: true})
   if (window.id === undefined || window.tabs === undefined) return
   const tabs = formatTabs(window.tabs)
+  const {headers, content} = jsonToMarkdown(tabs)
 
   const formattedInputText = inputText.trim().split('/')
   const fileName = formattedInputText.pop()
   if (fileName === undefined) return
 
   const subDirectoryHandle = await getSubDirectoryHandle(directoryHandle, formattedInputText)
-  const fileHandle = await subDirectoryHandle.getFileHandle(`${fileName}.md`, {
-    create: true,
-  })
+  const fileAlreadyExists = await fileExists(subDirectoryHandle, `${fileName}.md`)
 
-  const writable = await fileHandle.createWritable()
-  await writable.write(jsonToMarkdown(tabs))
-  await writable.close()
+  if (fileAlreadyExists) {
+    const file = await fileAlreadyExists.getFile()
+    const reader = new FileReader()
+    reader.readAsText(file)
+    await new Promise(resolve => (reader.onloadend = resolve))
+    const existingContent = reader.result
 
-  chrome.windows.remove(window.id)
+    const writable = await fileAlreadyExists.createWritable()
+    await writable.write(existingContent + content)
+    await writable.close()
+
+    chrome.windows.remove(window.id)
+  } else {
+    const fileHandle = await subDirectoryHandle.getFileHandle(`${fileName}.md`, {
+      create: true,
+    })
+
+    const writable = await fileHandle.createWritable()
+    await writable.write(headers + content)
+    await writable.close()
+
+    chrome.windows.remove(window.id)
+  }
 }
 
 async function getSubDirectoryHandle(
@@ -37,4 +54,15 @@ async function getSubDirectoryHandle(
     )
   }
   return directoryHandles.pop() as FileSystemDirectoryHandle
+}
+
+async function fileExists(
+  directoryHandle: FileSystemDirectoryHandle,
+  fileName: string
+): Promise<FileSystemFileHandle | null> {
+  try {
+    return await directoryHandle.getFileHandle(fileName)
+  } catch (err) {
+    return null
+  }
 }
