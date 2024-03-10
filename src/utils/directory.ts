@@ -4,12 +4,13 @@ export async function selectDirectory(
   try {
     const directoryHandle = await window.showDirectoryPicker()
     try {
-      const storeDirectoryHandleLog = await storeDirectoryHandle(directoryHandle)
-      console.log({storeDirectoryHandleLog})
+      const storedDirectoryHandle = await storeDirectoryHandle(directoryHandle)
+      console.log({storedDirectoryHandle})
+      chrome.runtime.sendMessage('New Directory Handle')
+      setDirectoryHandle(storedDirectoryHandle)
     } catch (error) {
       throw new Error(`storeDirectoryHandle ${error}`)
     }
-    setDirectoryHandle(directoryHandle)
   } catch (error) {
     throw new Error(`window.showDirectoryPicker ${error}`)
   }
@@ -18,13 +19,23 @@ export async function selectDirectory(
 export function clearDirectory(
   setDirectoryHandle: (directoryHandle: FileSystemDirectoryHandle | undefined) => void
 ) {
-  indexedDB.deleteDatabase('DirectoryHandle')
+  const clearDirectoryOutput = indexedDB.deleteDatabase('DirectoryHandle')
+  console.log({clearDirectoryOutput})
   setDirectoryHandle(undefined)
 }
 
-function storeDirectoryHandle(directoryHandle: FileSystemDirectoryHandle) {
+function storeDirectoryHandle(
+  directoryHandle: FileSystemDirectoryHandle
+): Promise<FileSystemDirectoryHandle> {
   return new Promise((resolve, reject) => {
     const openRequest = indexedDB.open('DirectoryHandle', 1)
+
+    openRequest.onupgradeneeded = function() {
+      const db = openRequest.result
+      if (!db.objectStoreNames.contains('DirectoryHandle')) {
+        db.createObjectStore('DirectoryHandle', {autoIncrement: true})
+      }
+    }
 
     openRequest.onsuccess = function() {
       const db = openRequest.result

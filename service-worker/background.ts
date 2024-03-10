@@ -2,10 +2,7 @@ import {getDirectoryHandle} from './utils/directory'
 import {Tab} from './utils/format-data'
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
-chrome.runtime.onMessage.addListener(e => {
-  console.log('Message to Background Script: ', e)
-  init()
-})
+chrome.runtime.onMessage.addListener(() => init())
 
 let directoryHandle: FileSystemDirectoryHandle | undefined
 
