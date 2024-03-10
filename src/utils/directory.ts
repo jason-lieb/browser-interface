@@ -82,28 +82,3 @@ export function getDirectoryHandle(): Promise<FileSystemDirectoryHandle | undefi
     }
   })
 }
-
-// type DirectoryContent = {
-//   fileHandles: FileSystemFileHandle[]
-//   directoryNames: string[]
-//   directoryHandles: FileSystemDirectoryHandle[]
-// }
-
-// async function parseDirectory(
-//   directoryHandle: FileSystemDirectoryHandle
-// ): Promise<DirectoryContent> {
-//   const entries = directoryHandle.entries()
-//   const fileHandles: FileSystemFileHandle[] = []
-//   const directoryNames: string[] = []
-//   const directoryHandles: FileSystemDirectoryHandle[] = []
-//   for await (const entry of entries) {
-//     switch (entry[1].kind) {
-//       case 'file':
-//         fileHandles.push(entry[1])
-//         break
-//       case 'directory':
-//         directoryNames.push(entry[0])
-//         directoryHandles.push(await directoryHandle.getDirectoryHandle(entry[0]))
-//     }
-//   }
-//   return {fileHandles, directoryNames, directoryHandles}
