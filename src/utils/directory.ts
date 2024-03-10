@@ -3,35 +3,15 @@ export async function selectDirectory(
 ) {
   try {
     const directoryHandle = await window.showDirectoryPicker()
-    // Handle errors for indexedDB differently?
-    const newDirectoryHandle = (await new Promise((resolve, reject) => {
-      const openRequest = indexedDB.open('DirectoryHandle', 1)
-
-      openRequest.onsuccess = function() {
-        const db = openRequest.result
-        const transaction = db.transaction('DirectoryHandle', 'readwrite')
-        const objectStore = transaction.objectStore('DirectoryHandle')
-        const addRequest = objectStore.add(directoryHandle)
-
-        addRequest.onsuccess = function() {
-          resolve(directoryHandle)
-          db.close()
-        }
-
-        addRequest.onerror = function() {
-          reject(addRequest.error)
-          db.close()
-        }
-      }
-
-      openRequest.onerror = function() {
-        reject(openRequest.error)
-      }
-    })) as FileSystemDirectoryHandle
-
-    setDirectoryHandle(newDirectoryHandle)
+    try {
+      const storeDirectoryHandleLog = await storeDirectoryHandle(directoryHandle)
+      console.log({storeDirectoryHandleLog})
+    } catch (error) {
+      throw new Error(`storeDirectoryHandle ${error}`)
+    }
+    setDirectoryHandle(directoryHandle)
   } catch (error) {
-    throw new Error(error as string)
+    throw new Error(`window.showDirectoryPicker ${error}`)
   }
 }
 
@@ -40,6 +20,33 @@ export function clearDirectory(
 ) {
   indexedDB.deleteDatabase('DirectoryHandle')
   setDirectoryHandle(undefined)
+}
+
+function storeDirectoryHandle(directoryHandle: FileSystemDirectoryHandle) {
+  return new Promise((resolve, reject) => {
+    const openRequest = indexedDB.open('DirectoryHandle', 1)
+
+    openRequest.onsuccess = function() {
+      const db = openRequest.result
+      const transaction = db.transaction('DirectoryHandle', 'readwrite')
+      const objectStore = transaction.objectStore('DirectoryHandle')
+      const addRequest = objectStore.add(directoryHandle)
+
+      addRequest.onsuccess = function() {
+        resolve(directoryHandle)
+        db.close()
+      }
+
+      addRequest.onerror = function() {
+        reject(addRequest.error)
+        db.close()
+      }
+    }
+
+    openRequest.onerror = function() {
+      reject(openRequest.error)
+    }
+  })
 }
 
 export function getDirectoryHandle(): Promise<FileSystemDirectoryHandle | undefined> {

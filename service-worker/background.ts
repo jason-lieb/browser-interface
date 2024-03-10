@@ -1,42 +1,69 @@
-// import {getDirectoryHandle} from './utils/background/get-directory-handle'
+import {getDirectoryHandle} from './utils/directory'
+import {Tab} from './utils/format-data'
 
-// init()
-
-chrome.action.onClicked.addListener(() => {
-  chrome.runtime.openOptionsPage()
+chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
+chrome.runtime.onMessage.addListener(e => {
+  console.log('Message to Background Script: ', e)
+  init()
 })
 
-// async function init() {
-//   const existingDirectoryHandle = await getDirectoryHandle()
-//   if (existingDirectoryHandle === undefined) {
-//     chrome.runtime.openOptionsPage()
-//   } else {
-//   }
-// }
+let directoryHandle: FileSystemDirectoryHandle | undefined
 
-// chrome.runtime.onMessage.addListener(handleIncomingMessages)
-// chrome.runtime.onInstalled.addListener(createTab)
-// chrome.action.onClicked.addListener(createTab)
+init()
 
-// function createTab() {
-//   chrome.tabs.create({ url: './index.html' })
-// }
+async function init() {
+  directoryHandle = await getDirectoryHandle()
+  console.log({directoryHandle}) // Remove in production
 
-// init()
+  if (directoryHandle === undefined) return
+  searchForOpenQueueFiles()
+}
 
-// function init() {
-//   fetchAndParseData()
-//   setTimeout(sendDataToFrontend, 500)
-// }
+async function searchForOpenQueueFiles() {
+  if (directoryHandle === undefined) return
+  const fileNamePattern = new RegExp('browser-interface-open-queue-\\d+\\.json')
+  const entries = directoryHandle.keys()
+  for await (const entry of entries) {
+    if (fileNamePattern.test(entry)) {
+      handleOpenQueueFile(await directoryHandle.getFileHandle(entry))
+    }
+  }
+  setTimeout(searchForOpenQueueFiles, 3000)
+}
 
-// async function fetchAndParseData() {
-//   const windowsResponse = await getData()
-//   if (windowsResponse === undefined) return
-//   parseWindows(windowsResponse)
-//   parseTabs(windowsResponse)
-//   // console.log('windows', windows)
-//   // console.log('tabs', tabs)
-// }
+async function handleOpenQueueFile(handle: FileSystemFileHandle) {
+  const file = await handle.getFile()
+  const contents = await file.text()
+  const tabs: Tab[] = JSON.parse(contents)
+
+  try {
+    await createWindowWithTabs(tabs)
+    directoryHandle?.removeEntry(handle.name)
+  } catch (error) {
+    throw new Error(`handleOpenQueueFile: ${error}`)
+  }
+}
+
+async function createWindowWithTabs(tabs: Tab[]): Promise<void> {
+  try {
+    const window = await chrome.windows.create({focused: true})
+
+    await Promise.all(
+      tabs.map((tab, index) => {
+        chrome.tabs.create({
+          windowId: window.id,
+          url: tab.url,
+          active: index === 0,
+        })
+      })
+    )
+
+    if (window.tabs === undefined || window.tabs[0].id === undefined) return
+    chrome.tabs.remove(window.tabs[0].id)
+  } catch (error) {
+    throw new Error(`createWindowWithTabs: ${error}`)
+  }
+}
 
 // async function getData(): Promise<chrome.windows.Window[] | undefined> {
 //   try {
@@ -119,11 +146,6 @@ chrome.action.onClicked.addListener(() => {
 //     throw new Error(error)
 //   }
 // }
-
-// Data Structures (Only neccesary data)
-// // Map<"windowID": { groupsIDs: [GroupId], tabIDs: [TabId]}>
-// // Map<"tabID": { title: String, url: String, favIcon: String, groupID: Int }>
-// // Map<"groupID": { title: String, color: String, collapsed: Bool } }>
 
 // // // Handle communication between background service and home tabs
 // // async function handleIncomingMessages(message, sender) {
