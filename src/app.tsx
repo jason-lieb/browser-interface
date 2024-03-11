@@ -28,6 +28,8 @@ export default function App() {
             </p>
             <button onClick={() => clearDirectory(setDirectoryHandle)}>Clear Directory</button>
           </div>
+          <hr />
+          <br />
           <div className="row">
             <label htmlFor="inputText">File Path: </label>
             <input
