@@ -5,7 +5,6 @@ export async function selectDirectory(
     const directoryHandle = await window.showDirectoryPicker()
     try {
       const storedDirectoryHandle = await storeDirectoryHandle(directoryHandle)
-      console.log({storedDirectoryHandle}) // Remove in production
       chrome.runtime.sendMessage('New Directory Handle')
       setDirectoryHandle(storedDirectoryHandle)
     } catch (error) {
@@ -20,7 +19,6 @@ export function clearDirectory(
   setDirectoryHandle: (directoryHandle: FileSystemDirectoryHandle | undefined) => void
 ) {
   const clearDirectoryOutput = indexedDB.deleteDatabase('DirectoryHandle')
-  console.log({clearDirectoryOutput}) // Remove in production
   setDirectoryHandle(undefined)
 }
 

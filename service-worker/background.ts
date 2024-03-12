@@ -10,7 +10,6 @@ init()
 
 async function init() {
   directoryHandle = await getDirectoryHandle()
-  console.log({directoryHandle}) // Remove in production
 
   if (directoryHandle === undefined) return
   searchForOpenQueueFiles()
