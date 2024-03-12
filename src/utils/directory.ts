@@ -18,7 +18,7 @@ export async function selectDirectory(
 export function clearDirectory(
   setDirectoryHandle: (directoryHandle: FileSystemDirectoryHandle | undefined) => void
 ) {
-  const clearDirectoryOutput = indexedDB.deleteDatabase('DirectoryHandle')
+  indexedDB.deleteDatabase('DirectoryHandle')
   setDirectoryHandle(undefined)
 }
 
