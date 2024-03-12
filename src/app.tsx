@@ -18,9 +18,9 @@ export default function App() {
   }, [])
 
   return (
-    <div id="container">
+    <>
       {directoryHandle ? (
-        <>
+        <div id="container">
           <div className="row">
             <p>
               <b>Directory: </b>
@@ -42,10 +42,10 @@ export default function App() {
           <button onClick={() => saveWindow(directoryHandle, inputText)} className="save">
             Save Window
           </button>
-        </>
+        </div>
       ) : (
         <button onClick={() => selectDirectory(setDirectoryHandle)}>Select Directory</button>
       )}
-    </div>
+    </>
   )
 }
