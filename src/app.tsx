@@ -35,6 +35,7 @@ export default function App() {
             <input
               id="inputText"
               type="text"
+              autoFocus
               value={inputText}
               onChange={e => setInputText((e.target as HTMLInputElement).value)}
             />
