@@ -14,13 +14,13 @@ Until the chrome extension is approved, the only way to install it will be manua
 
 3. Build the project with `npm run build`
 
-3. Navigate to the extensions page in your browser (`brave://extensions/`, `chrome://extensions/`, etc).
+4. Navigate to the extensions page in your browser (`brave://extensions/`, `chrome://extensions/`, etc).
 
-4. Enable Developer Mode by clicking the toggle switch next to "Developer mode".
+5. Enable Developer Mode by clicking the toggle switch next to "Developer mode".
 
-5. Click the "Load unpacked" button and select the dist folder inside of the directory.
+6. Click the "Load unpacked" button and select the dist folder inside of the directory.
 
-6. The extension should now be installed and visible in your extensions list.
+7. The extension should now be installed and visible in your extensions list.
 
 ### Screenshot
 ![chrome extension screenshot](screenshot.png)
