@@ -17,6 +17,13 @@ export default function App() {
     loadDirectoryHandle()
   }, [])
 
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault()
+    if (directoryHandle) {
+      saveWindow(directoryHandle, inputText)
+    }
+  }
+
   return (
     <>
       {directoryHandle ? (
@@ -30,19 +37,21 @@ export default function App() {
           </div>
           <hr />
           <br />
-          <div className="row">
-            <label htmlFor="inputText">File Path: </label>
-            <input
-              id="inputText"
-              type="text"
-              autoFocus
-              value={inputText}
-              onChange={e => setInputText((e.target as HTMLInputElement).value)}
-            />
-          </div>
-          <button onClick={() => saveWindow(directoryHandle, inputText)} className="save">
-            Save Window
-          </button>
+          <form onSubmit={handleSubmit}>
+            <div className="row">
+              <label htmlFor="inputText">File Path: </label>
+              <input
+                id="inputText"
+                type="text"
+                autoFocus
+                value={inputText}
+                onChange={e => setInputText((e.target as HTMLInputElement).value)}
+              />
+            </div>
+            <button onClick={() => saveWindow(directoryHandle, inputText)} className="save">
+              Save Window
+            </button>
+          </form>
         </div>
       ) : (
         <button onClick={() => selectDirectory(setDirectoryHandle)}>Select Directory</button>
