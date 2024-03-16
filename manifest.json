@@ -19,6 +19,6 @@
     "page": "options.html",
     "open_in_tab": true
   },
-  "permissions": ["tabs", "tabGroups"],
+  "permissions": ["tabs"],
   "minimum_chrome_version": "88"
 }

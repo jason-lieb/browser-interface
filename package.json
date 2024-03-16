@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "./scripts/build.sh && tsc && vite build",
     "preview": "vite preview",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "zip": "zip -r dist.zip dist"
   },
   "dependencies": {
     "react": "^18.2.0",
