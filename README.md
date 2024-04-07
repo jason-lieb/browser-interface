@@ -24,5 +24,5 @@ It is recommended to install this extension directly from the [chrome web store]
 
 7. The extension should now be installed and visible in your extensions list.
 
-### Screenshot
+## Screenshot
 ![chrome extension screenshot](screenshot.png)
