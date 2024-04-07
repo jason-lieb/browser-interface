@@ -28,5 +28,15 @@ It is recommended to install this extension directly from the [chrome web store]
 
 To build and zip the project for distribution with the chrome web store, run `npm run zip`.
 
+## Browser Compatibility
+
+In order to work with Brave browser, you must go to `brave://flags` and manually enable the following flags:
+
+1. `#file-system-access-api`
+
+2. `#file-system-access-persistant-permission`
+
+3. `#file-system-observer`
+
 ## Screenshot
 ![chrome extension screenshot](screenshot.png)
