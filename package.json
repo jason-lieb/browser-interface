@@ -1,14 +1,14 @@
 {
   "name": "obsidian-browser-interface-extension",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "./scripts/build.sh && tsc && vite build",
     "preview": "vite preview",
     "check": "tsc --noEmit",
-    "zip": "zip -r obsidian-browser-interface-extension.zip dist"
+    "zip": "npm run build && zip -r obsidian-browser-interface-extension.zip dist"
   },
   "dependencies": {
     "react": "^18.2.0",

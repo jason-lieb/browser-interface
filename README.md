@@ -6,7 +6,7 @@ This extension allows you to save all the tabs in a chrome window in markdown to
 
 ## Installation
 
-It is recommended to install this extension directly from the [chrome web store](https://chromewebstore.google.com/detail/obsidian-browser-interfac/eciohhdfhkkihkiiefldkejohdoghogo).
+It is recommended to install this extension directly from the [chrome web store](https://chromewebstore.google.com/detail/obsidian-browser-interfac/eciohhdfhkkihkiiefldkejohdoghogo). The rest of the instructions in under this sub-heading are for how to install and build the project manually.
 
 ### Manual Installation
 
@@ -23,6 +23,10 @@ It is recommended to install this extension directly from the [chrome web store]
 6. Click the "Load unpacked" button and select the dist folder inside of the directory.
 
 7. The extension should now be installed and visible in your extensions list.
+
+### Build
+
+To build and zip the project for distribution with the chrome web store, run `npm run zip`.
 
 ## Screenshot
 ![chrome extension screenshot](screenshot.png)
