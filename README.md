@@ -30,9 +30,17 @@ To build and zip the project for distribution with the chrome web store, run `np
 
 ## Browser Compatibility
 
-In order to work with Brave browser, you must go to `brave://flags` and manually enable the following flags:
+Brave: go to `brave://flags` and manually enable the following flags:
 
 1. `#file-system-access-api`
+
+2. `#file-system-access-persistant-permission`
+
+3. `#file-system-observer`
+
+Chromium: go to `chrome://flags` and manually enable the following flags:
+
+1. `#permission-storage-access-api`
 
 2. `#file-system-access-persistant-permission`
 
