@@ -20,7 +20,7 @@ export default function App() {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
     if (directoryHandle) {
-      saveWindow(directoryHandle, inputText)
+      saveWindow(directoryHandle, setDirectoryHandle, inputText)
     }
   }
 
@@ -48,9 +48,7 @@ export default function App() {
                 onChange={e => setInputText((e.target as HTMLInputElement).value)}
               />
             </div>
-            <button onClick={() => saveWindow(directoryHandle, inputText)} className="save">
-              Save Window
-            </button>
+            <button className="save">Save Window</button>
           </form>
         </div>
       ) : (
