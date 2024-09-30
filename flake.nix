@@ -18,7 +18,7 @@
         freckle = inputs.freckle.packages.${system};
       in
       rec {
-        packages = rec {
+        packages = {
           nodejs = freckle.nodejs-18-19-1;
           prettier = freckle.prettier-default;
           typescript = nixpkgs-23-11.typescript;

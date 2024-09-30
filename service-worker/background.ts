@@ -1,3 +1,4 @@
+import {SHA256, enc} from 'crypto-js'
 import {getDirectoryHandle} from './utils/directory'
 import {Tab} from './utils/format-data'
 
@@ -5,6 +6,7 @@ chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
 chrome.runtime.onMessage.addListener(() => init())
 
 let directoryHandle: FileSystemDirectoryHandle | undefined
+const processedFiles = new Set<string>()
 
 init()
 
@@ -30,9 +32,18 @@ async function searchForOpenQueueFiles() {
 async function handleOpenQueueFile(handle: FileSystemFileHandle) {
   const file = await handle.getFile()
   const contents = await file.text()
+
+  const hash = SHA256(contents).toString(enc.Hex)
+
+  if (processedFiles.has(hash)) {
+    return
+  }
+
   const tabs: Tab[] = JSON.parse(contents)
 
   try {
+    console.log('Adding hash:', hash)
+    processedFiles.add(hash)
     await createWindowWithTabs(tabs)
     directoryHandle?.removeEntry(handle.name)
   } catch (error) {
@@ -54,7 +65,9 @@ async function createWindowWithTabs(tabs: Tab[]): Promise<void> {
       })
     )
 
+    console.log('Window created')
     if (window.tabs === undefined || window.tabs[0].id === undefined) return
+    console.log('Removing first tab')
     chrome.tabs.remove(window.tabs[0].id)
   } catch (error) {
     throw new Error(`createWindowWithTabs: ${error}`)
