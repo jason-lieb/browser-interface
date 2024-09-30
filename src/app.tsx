@@ -6,23 +6,91 @@ export default function App() {
   const [directoryHandle, setDirectoryHandle] = React.useState<
     FileSystemDirectoryHandle | undefined
   >(undefined)
+  const [backupDirectory, setBackupDirectory] = React.useState('')
 
-  const [inputText, setInputText] = React.useState('')
+  const [directoryInputText, setDirectoryInputText] = React.useState('')
+  const [backupInputText, setBackupInputText] = React.useState('')
+
+  const [isSettingUpBackup, setIsSettingUpBackup] = React.useState(false)
 
   React.useEffect(() => {
-    async function loadDirectoryHandle() {
-      const directoryHandle = await getDirectoryHandle()
-      setDirectoryHandle(directoryHandle)
-    }
     loadDirectoryHandle()
+    loadBackupDirectory()
   }, [])
 
-  const handleSubmit = (event: React.FormEvent) => {
+  async function loadDirectoryHandle() {
+    const directoryHandle = await getDirectoryHandle()
+    setDirectoryHandle(directoryHandle)
+  }
+
+  function loadBackupDirectory() {
+    chrome.storage.local.get(['backupDirectory'], result => {
+      if (result.backupDirectory) {
+        console.log('Backup directory found:', result.backupDirectory)
+        setBackupDirectory(result.backupDirectory)
+      } else {
+        console.log('Backup directory not found')
+      }
+    })
+  }
+
+  function storeBackupDirectory(backupDirectory: string) {
+    chrome.storage.local.set({backupDirectory}, () => {
+      console.log('Backup directory saved:', {backupDirectory})
+    })
+  }
+
+  function clearBackupDirectory() {
+    setIsSettingUpBackup(false)
+    setBackupDirectory('')
+  }
+
+  const handleDirectory = (event: React.FormEvent) => {
     event.preventDefault()
     if (directoryHandle) {
-      saveWindow(directoryHandle, setDirectoryHandle, inputText)
+      saveWindow(directoryHandle, setDirectoryHandle, directoryInputText)
     }
   }
+
+  const handleBackup = (event: React.FormEvent) => {
+    event.preventDefault()
+    const backupDirectory = backupInputText
+      .split('/')
+      .map(s => s.trim())
+      .join('/')
+    storeBackupDirectory(backupDirectory)
+    setIsSettingUpBackup(false)
+    setBackupInputText('')
+  }
+
+  const backupDirectoryNode =
+    backupDirectory !== '' ? (
+      <div className="row">
+        <p>
+          <b>Backup Subdirectory: </b>
+          {backupDirectory}
+        </p>
+        <button onClick={clearBackupDirectory}>Clear Backup Subdirectory</button>
+      </div>
+    ) : isSettingUpBackup ? (
+      <form onSubmit={handleBackup}>
+        <div className="row">
+          <label htmlFor="backupInputText">File Path: </label>
+          <input
+            id="backupInputText"
+            type="text"
+            autoFocus
+            value={backupInputText}
+            onChange={e => setBackupInputText((e.target as HTMLInputElement).value)}
+          />
+        </div>
+        <button className="save">Save Backup Subdirectory</button>
+      </form>
+    ) : (
+      <>
+        <button onClick={() => setIsSettingUpBackup(true)}>Setup Backup Subdirectory</button>
+      </>
+    )
 
   return (
     <>
@@ -37,19 +105,23 @@ export default function App() {
           </div>
           <hr />
           <br />
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleDirectory}>
             <div className="row">
-              <label htmlFor="inputText">File Path: </label>
+              <label htmlFor="directoryInputText">File Path: </label>
               <input
-                id="inputText"
+                id="directoryInputText"
                 type="text"
                 autoFocus
-                value={inputText}
-                onChange={e => setInputText((e.target as HTMLInputElement).value)}
+                value={directoryInputText}
+                onChange={e => setDirectoryInputText((e.target as HTMLInputElement).value)}
               />
             </div>
             <button className="save">Save Window</button>
           </form>
+          <hr />
+          <br />
+          <h6>** Experimental **</h6>
+          {backupDirectoryNode}
         </div>
       ) : (
         <button onClick={() => selectDirectory(setDirectoryHandle)}>Select Directory</button>

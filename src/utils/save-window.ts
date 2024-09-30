@@ -57,6 +57,25 @@ export async function saveWindow(
   }
 }
 
+export async function saveAllWindows(subDirectoryHandle: FileSystemDirectoryHandle) {
+  try {
+    const windows = await chrome.windows.getAll({populate: true})
+    for (const window of windows) {
+      if (window.id === undefined || window.tabs === undefined) return
+      const tabs = formatTabs(window.tabs)
+      const {headers, content} = jsonToMarkdown(tabs)
+      const fileHandle = await subDirectoryHandle.getFileHandle(`${window.id}.md`, {
+        create: true,
+      })
+      const writable = await fileHandle.createWritable()
+      await writable.write(headers + content)
+      await writable.close()
+    }
+  } catch (err) {
+    console.error('saveAllWindows: ', err)
+  }
+}
+
 async function getSubDirectoryHandle(
   existingDirectoryHandle: FileSystemDirectoryHandle,
   directoryNames: string[]
