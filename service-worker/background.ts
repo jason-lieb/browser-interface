@@ -36,6 +36,9 @@ async function handleOpenQueueFile(handle: FileSystemFileHandle) {
   const hash = SHA256(contents).toString(enc.Hex)
 
   if (processedFiles.has(hash)) {
+    console.log('File already processed')
+    console.log('Contents:', contents)
+    console.log('Hash:', hash)
     return
   }
 
