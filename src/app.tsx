@@ -34,7 +34,7 @@ export default function App() {
     })
   }
 
-  function storeBackupDirectory(backupDirectory: string | undefined) {
+  function storeBackupDirectory(backupDirectory: string) {
     chrome.storage.local.set({backupDirectory}, () => {
       console.log('Backup directory saved:', {backupDirectory})
     })
@@ -43,7 +43,7 @@ export default function App() {
   function clearBackupDirectory() {
     setIsSettingUpBackup(false)
     setBackupDirectory('')
-    storeBackupDirectory(undefined)
+    storeBackupDirectory('')
     chrome.runtime.sendMessage('Clear Backup Directory')
   }
 

@@ -4,7 +4,10 @@ import {saveAllWindows, getSubDirectoryHandle} from './utils/save-window'
 import {Tab} from './utils/format-data'
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
-chrome.runtime.onMessage.addListener(() => init())
+chrome.runtime.onMessage.addListener((...args) => {
+  backgroundLog('onMessage Listener', [...args])
+  init()
+})
 
 let directoryHandle: FileSystemDirectoryHandle | undefined
 let backupSubdirectory: string | undefined
@@ -38,7 +41,11 @@ function scheduleBackupOpenWindows(time: number = DEFAULT_BACKUP_FREQUENCY) {
 
 async function backupOpenWindows() {
   backgroundLog('Running backupOpenWindows')
-  if (directoryHandle === undefined || backupSubdirectory === undefined) {
+  if (
+    directoryHandle === undefined ||
+    backupSubdirectory === undefined ||
+    backupSubdirectory === ''
+  ) {
     backgroundLog('Directory handle or backup subdirectory is undefined')
     scheduleBackupOpenWindows(5 * 60 * 1000)
     return
@@ -52,6 +59,7 @@ async function backupOpenWindows() {
   }
 
   if (subdirectoryHandle === undefined) return
+  backgroundLog('Clearing directory and backing up open windows')
   await clearSubdirectory(subdirectoryHandle)
   await saveAllWindows(subdirectoryHandle)
 
