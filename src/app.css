@@ -41,3 +41,12 @@ button {
   max-width: 10rem;
   margin-bottom: 0 !important;
 }
+
+.full-width {
+  max-width: 500px !important;
+  width: 500px !important;
+}
+
+.directory-path {
+  width: 150px;
+}

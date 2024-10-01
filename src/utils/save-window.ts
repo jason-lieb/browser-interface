@@ -76,7 +76,7 @@ export async function saveAllWindows(subDirectoryHandle: FileSystemDirectoryHand
   }
 }
 
-async function getSubDirectoryHandle(
+export async function getSubDirectoryHandle(
   existingDirectoryHandle: FileSystemDirectoryHandle,
   directoryNames: string[]
 ): Promise<FileSystemDirectoryHandle> {

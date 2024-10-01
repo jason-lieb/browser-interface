@@ -67,20 +67,22 @@ export default function App() {
   const backupDirectoryNode =
     backupDirectory !== '' ? (
       <div className="row">
-        <div className="row">
+        <div className="full-width">
           <p>
             <b>Backup Subdirectory: </b>
             {backupDirectory}
           </p>
         </div>
-        <div className="row">
-          <button onClick={clearBackupDirectory}>Clear Backup Subdirectory</button>
-        </div>
+        <button onClick={clearBackupDirectory} className="full-width">
+          Clear Backup Subdirectory
+        </button>
       </div>
     ) : isSettingUpBackup ? (
       <form onSubmit={handleBackup}>
         <div className="row">
-          <label htmlFor="backupInputText">Directory Path: </label>
+          <label htmlFor="backupInputText" className="directory-path">
+            Directory Path:{' '}
+          </label>
           <input
             id="backupInputText"
             type="text"
@@ -92,9 +94,9 @@ export default function App() {
         <button className="save">Save Backup Subdirectory</button>
       </form>
     ) : (
-      <div className="row">
-        <button onClick={() => setIsSettingUpBackup(true)}>Setup Backup Subdirectory</button>
-      </div>
+      <button className="full-width" onClick={() => setIsSettingUpBackup(true)}>
+        Setup Backup Subdirectory
+      </button>
     )
 
   return (
@@ -123,7 +125,7 @@ export default function App() {
             <button className="save">Save Window</button>
           </form>
           <hr />
-          <h6 style={{marginTop: 0}}>** Experimental **</h6>
+          <b>** Experimental **</b>
           {backupDirectoryNode}
         </div>
       ) : (

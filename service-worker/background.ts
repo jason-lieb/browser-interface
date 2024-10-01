@@ -1,6 +1,6 @@
 import {SHA256, enc} from 'crypto-js'
 import {getDirectoryHandle} from './utils/directory'
-import {saveAllWindows} from './utils/save-window'
+import {saveAllWindows, getSubDirectoryHandle} from './utils/save-window'
 import {Tab} from './utils/format-data'
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
@@ -22,6 +22,7 @@ async function init() {
       backupSubdirectory = result.backupDirectory
       backupOpenWindows()
     } else {
+      scheduleBackupOpenWindows()
       backgroundLog('Backup directory not found')
     }
   })
@@ -41,9 +42,7 @@ async function backupOpenWindows() {
 
   let subdirectoryHandle: FileSystemDirectoryHandle | undefined
   try {
-    subdirectoryHandle = await directoryHandle.getDirectoryHandle(backupSubdirectory, {
-      create: true,
-    })
+    subdirectoryHandle = await getSubDirectoryHandle(directoryHandle, backupSubdirectory.split('/'))
   } catch (err) {
     console.error('Error getting subdirectory handle: ', err)
     return
