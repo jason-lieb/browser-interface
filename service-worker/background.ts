@@ -22,6 +22,7 @@ async function init() {
       backupSubdirectory = result.backupDirectory
       backupOpenWindows()
     } else {
+      backupSubdirectory = undefined
       scheduleBackupOpenWindows()
       backgroundLog('Backup directory not found')
     }
@@ -29,14 +30,17 @@ async function init() {
   searchForOpenQueueFiles()
 }
 
-function scheduleBackupOpenWindows(time: number = 15000) {
+const DEFAULT_BACKUP_FREQUENCY = 15 * 60 * 1000
+
+function scheduleBackupOpenWindows(time: number = DEFAULT_BACKUP_FREQUENCY) {
   setTimeout(backupOpenWindows, time)
 }
 
 async function backupOpenWindows() {
+  backgroundLog('Running backupOpenWindows')
   if (directoryHandle === undefined || backupSubdirectory === undefined) {
     backgroundLog('Directory handle or backup subdirectory is undefined')
-    scheduleBackupOpenWindows(5000)
+    scheduleBackupOpenWindows(5 * 60 * 1000)
     return
   }
 
@@ -45,9 +49,9 @@ async function backupOpenWindows() {
     subdirectoryHandle = await getSubDirectoryHandle(directoryHandle, backupSubdirectory.split('/'))
   } catch (err) {
     console.error('Error getting subdirectory handle: ', err)
-    return
   }
 
+  if (subdirectoryHandle === undefined) return
   await clearSubdirectory(subdirectoryHandle)
   await saveAllWindows(subdirectoryHandle)
 
@@ -74,7 +78,7 @@ async function searchForOpenQueueFiles() {
   for await (const entry of entries) {
     if (fileNamePattern.test(entry)) handleOpenQueueFile(await directoryHandle.getFileHandle(entry))
   }
-  setTimeout(searchForOpenQueueFiles, 3000)
+  setTimeout(searchForOpenQueueFiles, 3 * 60 * 1000)
 }
 
 async function handleOpenQueueFile(handle: FileSystemFileHandle) {

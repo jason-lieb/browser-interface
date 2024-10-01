@@ -34,7 +34,7 @@ export default function App() {
     })
   }
 
-  function storeBackupDirectory(backupDirectory: string) {
+  function storeBackupDirectory(backupDirectory: string | undefined) {
     chrome.storage.local.set({backupDirectory}, () => {
       console.log('Backup directory saved:', {backupDirectory})
     })
@@ -43,6 +43,8 @@ export default function App() {
   function clearBackupDirectory() {
     setIsSettingUpBackup(false)
     setBackupDirectory('')
+    storeBackupDirectory(undefined)
+    chrome.runtime.sendMessage('Clear Backup Directory')
   }
 
   const handleDirectory = (event: React.FormEvent) => {
@@ -66,17 +68,21 @@ export default function App() {
 
   const backupDirectoryNode =
     backupDirectory !== '' ? (
-      <div className="row">
-        <div className="full-width">
-          <p>
-            <b>Backup Subdirectory: </b>
-            {backupDirectory}
-          </p>
+      <>
+        <div className="row">
+          <div className="full-width">
+            <p>
+              <b>Backup Subdirectory: </b>
+              {backupDirectory}
+            </p>
+          </div>
         </div>
-        <button onClick={clearBackupDirectory} className="full-width">
-          Clear Backup Subdirectory
-        </button>
-      </div>
+        <div className="row">
+          <button onClick={clearBackupDirectory} className="full-width">
+            Clear Backup Subdirectory
+          </button>
+        </div>
+      </>
     ) : isSettingUpBackup ? (
       <form onSubmit={handleBackup}>
         <div className="row">
@@ -111,6 +117,7 @@ export default function App() {
             <button onClick={() => clearDirectory(setDirectoryHandle)}>Clear Directory</button>
           </div>
           <hr />
+          <br />
           <form onSubmit={handleDirectory}>
             <div className="row">
               <label htmlFor="directoryInputText">File Path: </label>
@@ -125,7 +132,8 @@ export default function App() {
             <button className="save">Save Window</button>
           </form>
           <hr />
-          <b>** Experimental **</b>
+          {/* <br /> */}
+          <h6>** Experimental **</h6>
           {backupDirectoryNode}
         </div>
       ) : (
