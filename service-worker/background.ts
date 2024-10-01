@@ -3,8 +3,8 @@ import {getDirectoryHandle} from './utils/directory'
 import {saveAllWindows} from './utils/save-window'
 import {Tab} from './utils/format-data'
 
-chrome.action.onClicked.addListener(chrome.runtime.openOptionsPage)
-chrome.runtime.onMessage.addListener(init)
+chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
+chrome.runtime.onMessage.addListener(() => init())
 
 let directoryHandle: FileSystemDirectoryHandle | undefined
 let backupSubdirectory: string | undefined

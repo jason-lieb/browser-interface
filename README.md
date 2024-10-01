@@ -24,9 +24,15 @@ It is recommended to install this extension directly from the [chrome web store]
 
 7. The extension should now be installed and visible in your extensions list.
 
-### Build
+### Build a Release
 
-To build and zip the project for distribution with the chrome web store, run `npm run zip`.
+To build and zip the project for distribution with the chrome web store
+
+- Set new versions in `package.json` and `manifest.json`
+
+- Run `npm i`.
+
+- Run `npm run zip`.
 
 ## Browser Compatibility
 

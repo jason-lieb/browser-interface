@@ -58,6 +58,7 @@ export default function App() {
       .split('/')
       .map(s => s.trim())
       .join('/')
+    setBackupDirectory(backupDirectory)
     storeBackupDirectory(backupDirectory)
     setIsSettingUpBackup(false)
     setBackupInputText('')
@@ -66,16 +67,20 @@ export default function App() {
   const backupDirectoryNode =
     backupDirectory !== '' ? (
       <div className="row">
-        <p>
-          <b>Backup Subdirectory: </b>
-          {backupDirectory}
-        </p>
-        <button onClick={clearBackupDirectory}>Clear Backup Subdirectory</button>
+        <div className="row">
+          <p>
+            <b>Backup Subdirectory: </b>
+            {backupDirectory}
+          </p>
+        </div>
+        <div className="row">
+          <button onClick={clearBackupDirectory}>Clear Backup Subdirectory</button>
+        </div>
       </div>
     ) : isSettingUpBackup ? (
       <form onSubmit={handleBackup}>
         <div className="row">
-          <label htmlFor="backupInputText">File Path: </label>
+          <label htmlFor="backupInputText">Directory Path: </label>
           <input
             id="backupInputText"
             type="text"
@@ -87,9 +92,9 @@ export default function App() {
         <button className="save">Save Backup Subdirectory</button>
       </form>
     ) : (
-      <>
+      <div className="row">
         <button onClick={() => setIsSettingUpBackup(true)}>Setup Backup Subdirectory</button>
-      </>
+      </div>
     )
 
   return (
@@ -104,7 +109,6 @@ export default function App() {
             <button onClick={() => clearDirectory(setDirectoryHandle)}>Clear Directory</button>
           </div>
           <hr />
-          <br />
           <form onSubmit={handleDirectory}>
             <div className="row">
               <label htmlFor="directoryInputText">File Path: </label>
@@ -119,8 +123,7 @@ export default function App() {
             <button className="save">Save Window</button>
           </form>
           <hr />
-          <br />
-          <h6>** Experimental **</h6>
+          <h6 style={{marginTop: 0}}>** Experimental **</h6>
           {backupDirectoryNode}
         </div>
       ) : (
