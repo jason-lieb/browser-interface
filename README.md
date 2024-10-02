@@ -4,6 +4,14 @@ A chrome extension that pairs with a [obsidian plugin](https://github.com/jason-
 
 This extension allows you to save all the tabs in a chrome window in markdown to a folder of your choice. The markdown is designed to be used with the Obsidian Browser Interface Plugin and other Obsidian plugins to display the tabs and reopen or delete them.
 
+## Use
+
+- Make sure to set the browser flags below.
+- Choose a directory on your system to store yours files. You may need to accept permissions the first few times you use the extension.
+- Type the file path of where you want to store the window inside the directory. You can create subfolders by using `/` such as `Subfolder / Note Name` (surrounding spaces are allowed).
+- Click `Save Window` to close the current window and save it as markdown.
+- The feature to backup all open windows works similarly. Create a directory path such as `Backups/Desktop` and the extension will backup all your open windows to that folder every 5 minutes or when you manually backup.
+
 ## Installation
 
 It is recommended to install this extension directly from the [chrome web store](https://chromewebstore.google.com/detail/obsidian-browser-interfac/eciohhdfhkkihkiiefldkejohdoghogo). The rest of the instructions in under this sub-heading are for how to install and build the project manually.

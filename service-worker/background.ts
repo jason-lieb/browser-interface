@@ -7,12 +7,13 @@ chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
 chrome.runtime.onMessage.addListener(message => {
   switch (message) {
     case 'New Directory Handle':
-      backgroundLog('Switch - New Directory Handle')
       init()
       break
     case 'Changed Backup Directory':
-      backgroundLog('Switch - Changed Backup Directory')
       loadBackupDirectory()
+      break
+    case 'Manually Run Backup':
+      backupOpenWindows()
       break
     default:
       backgroundLog('Unexpected message: ', message)
@@ -23,10 +24,10 @@ let directoryHandle: FileSystemDirectoryHandle | undefined
 let backupSubdirectory: string | undefined
 const processedFiles = new Set<string>()
 
-const DEFAULT_BACKUP_FREQUENCY = 15 * 60 * 1000
+const DEFAULT_BACKUP_FREQUENCY = 5 * 60 * 1000
 
 init()
-setTimeout(() => setInterval(backupOpenWindows, DEFAULT_BACKUP_FREQUENCY), 15000)
+setInterval(backupOpenWindows, DEFAULT_BACKUP_FREQUENCY)
 
 async function init() {
   directoryHandle = await getDirectoryHandle()
@@ -40,6 +41,7 @@ function loadBackupDirectory() {
     if (result.backupDirectory) {
       backgroundLog('Backup directory found:', result.backupDirectory)
       backupSubdirectory = result.backupDirectory
+      backupOpenWindows()
     } else {
       backgroundLog('Backup directory not found')
       backupSubdirectory = undefined
@@ -48,7 +50,6 @@ function loadBackupDirectory() {
 }
 
 async function backupOpenWindows() {
-  backgroundLog('Running backupOpenWindows')
   if (directoryHandle === undefined) {
     backgroundLog('Directory handle is undefined')
     return

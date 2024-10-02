@@ -36,7 +36,7 @@ export default function App() {
 
   function storeBackupDirectory(backupDirectory: string) {
     chrome.storage.local.set({backupDirectory}, () => {
-      console.log('Backup directory saved:', {backupDirectory})
+      console.log('Backup directory saved:', backupDirectory)
       chrome.runtime.sendMessage('Changed Backup Directory')
     })
   }
@@ -78,6 +78,14 @@ export default function App() {
           </div>
         </div>
         <div className="row">
+          <button
+            onClick={() => chrome.runtime.sendMessage('Manually Run Backup')}
+            className="full-width"
+          >
+            Manually Run Backup
+          </button>
+        </div>
+        <div className="row">
           <button onClick={clearBackupDirectory} className="full-width">
             Clear Backup Subdirectory
           </button>
@@ -114,7 +122,14 @@ export default function App() {
               <b>Directory: </b>
               {directoryHandle.name}
             </p>
-            <button onClick={() => clearDirectory(setDirectoryHandle)}>Clear Directory</button>
+            <button
+              onClick={() => {
+                clearBackupDirectory()
+                clearDirectory(setDirectoryHandle)
+              }}
+            >
+              Clear Directory
+            </button>
           </div>
           <hr />
           <br />
@@ -132,8 +147,7 @@ export default function App() {
             <button className="save">Save Window</button>
           </form>
           <hr />
-          {/* <br /> */}
-          <h6>** Experimental **</h6>
+          <br />
           {backupDirectoryNode}
         </div>
       ) : (

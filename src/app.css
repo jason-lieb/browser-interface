@@ -51,3 +51,8 @@ button {
   width: 160px !important;
   text-align: left !important;
 }
+
+#backupInputText {
+  max-width: 340px !important;
+  width: 340px !important;
+}
