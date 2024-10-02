@@ -95,7 +95,7 @@ export default function App() {
       <form onSubmit={handleBackup}>
         <div className="row">
           <label htmlFor="backupInputText" className="directory-path">
-            Directory Path:{' '}
+            <b>Directory Path: </b>
           </label>
           <input
             id="backupInputText"
@@ -135,7 +135,9 @@ export default function App() {
           <br />
           <form onSubmit={handleDirectory}>
             <div className="row">
-              <label htmlFor="directoryInputText">File Path: </label>
+              <label htmlFor="directoryInputText">
+                <b>File Path: </b>
+              </label>
               <input
                 id="directoryInputText"
                 type="text"
