@@ -48,5 +48,6 @@ button {
 }
 
 .directory-path {
-  width: 150px;
+  width: 160px !important;
+  text-align: left !important;
 }

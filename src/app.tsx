@@ -37,6 +37,7 @@ export default function App() {
   function storeBackupDirectory(backupDirectory: string) {
     chrome.storage.local.set({backupDirectory}, () => {
       console.log('Backup directory saved:', {backupDirectory})
+      chrome.runtime.sendMessage('Changed Backup Directory')
     })
   }
 
@@ -44,7 +45,6 @@ export default function App() {
     setIsSettingUpBackup(false)
     setBackupDirectory('')
     storeBackupDirectory('')
-    chrome.runtime.sendMessage('Clear Backup Directory')
   }
 
   const handleDirectory = (event: React.FormEvent) => {
@@ -101,7 +101,7 @@ export default function App() {
       </form>
     ) : (
       <button className="full-width" onClick={() => setIsSettingUpBackup(true)}>
-        Setup Backup Subdirectory
+        Setup Subdirectory to Backup Open Windows
       </button>
     )
 

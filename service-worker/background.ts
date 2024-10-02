@@ -4,50 +4,61 @@ import {saveAllWindows, getSubDirectoryHandle} from './utils/save-window'
 import {Tab} from './utils/format-data'
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
-chrome.runtime.onMessage.addListener((...args) => {
-  backgroundLog('onMessage Listener', [...args])
-  init()
+chrome.runtime.onMessage.addListener(message => {
+  switch (message) {
+    case 'New Directory Handle':
+      backgroundLog('Switch - New Directory Handle')
+      init()
+      break
+    case 'Changed Backup Directory':
+      backgroundLog('Switch - Changed Backup Directory')
+      loadBackupDirectory()
+      break
+    default:
+      backgroundLog('Unexpected message: ', message)
+  }
 })
 
 let directoryHandle: FileSystemDirectoryHandle | undefined
 let backupSubdirectory: string | undefined
 const processedFiles = new Set<string>()
 
+const DEFAULT_BACKUP_FREQUENCY = 15 * 60 * 1000
+
 init()
+setTimeout(() => setInterval(backupOpenWindows, DEFAULT_BACKUP_FREQUENCY), 15000)
 
 async function init() {
   directoryHandle = await getDirectoryHandle()
-
   if (directoryHandle === undefined) return
+  loadBackupDirectory()
+  searchForOpenQueueFiles()
+}
+
+function loadBackupDirectory() {
   chrome.storage.local.get(['backupDirectory'], result => {
     if (result.backupDirectory) {
       backgroundLog('Backup directory found:', result.backupDirectory)
       backupSubdirectory = result.backupDirectory
-      backupOpenWindows()
     } else {
-      backupSubdirectory = undefined
-      scheduleBackupOpenWindows()
       backgroundLog('Backup directory not found')
+      backupSubdirectory = undefined
     }
   })
-  searchForOpenQueueFiles()
-}
-
-const DEFAULT_BACKUP_FREQUENCY = 15 * 60 * 1000
-
-function scheduleBackupOpenWindows(time: number = DEFAULT_BACKUP_FREQUENCY) {
-  setTimeout(backupOpenWindows, time)
 }
 
 async function backupOpenWindows() {
   backgroundLog('Running backupOpenWindows')
-  if (
-    directoryHandle === undefined ||
-    backupSubdirectory === undefined ||
-    backupSubdirectory === ''
-  ) {
-    backgroundLog('Directory handle or backup subdirectory is undefined')
-    scheduleBackupOpenWindows(5 * 60 * 1000)
+  if (directoryHandle === undefined) {
+    backgroundLog('Directory handle is undefined')
+    return
+  }
+  if (backupSubdirectory === undefined) {
+    backgroundLog('Backup subdirectory is undefined')
+    return
+  }
+  if (backupSubdirectory === '') {
+    backgroundLog("Directory handle or backup subdirectory is ''")
     return
   }
 
@@ -62,8 +73,6 @@ async function backupOpenWindows() {
   backgroundLog('Clearing directory and backing up open windows')
   await clearSubdirectory(subdirectoryHandle)
   await saveAllWindows(subdirectoryHandle)
-
-  scheduleBackupOpenWindows()
 }
 
 async function clearSubdirectory(subdirectoryHandle: FileSystemDirectoryHandle) {
