@@ -32,6 +32,9 @@
             typescript
             zip
           ];
+          shellHook = ''
+            npm install
+          '';
         };
       }
     );
