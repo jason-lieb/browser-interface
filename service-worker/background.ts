@@ -77,10 +77,9 @@ async function backupOpenWindows() {
 }
 
 async function clearSubdirectory(subdirectoryHandle: FileSystemDirectoryHandle) {
-  const entries = subdirectoryHandle.keys()
   let entryLog: string | undefined
   try {
-    for await (const entry of entries) {
+    for await (const entry of subdirectoryHandle.keys()) {
       entryLog = entry
       subdirectoryHandle.removeEntry(entry)
     }
@@ -92,8 +91,7 @@ async function clearSubdirectory(subdirectoryHandle: FileSystemDirectoryHandle) 
 async function searchForOpenQueueFiles() {
   if (directoryHandle === undefined) return
   const fileNamePattern = new RegExp('browser-interface-open-queue-\\d+\\.json')
-  const entries = directoryHandle.keys()
-  for await (const entry of entries) {
+  for await (const entry of directoryHandle.keys()) {
     if (fileNamePattern.test(entry)) handleOpenQueueFile(await directoryHandle.getFileHandle(entry))
   }
   setTimeout(searchForOpenQueueFiles, 3 * 60 * 1000)
