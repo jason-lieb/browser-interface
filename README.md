@@ -14,7 +14,7 @@ This extension allows you to save all the tabs in a chrome window in markdown to
 
 ## Installation
 
-It is recommended to install this extension directly from the [chrome web store](https://chromewebstore.google.com/detail/obsidian-browser-interfac/eciohhdfhkkihkiiefldkejohdoghogo). The rest of the instructions in under this sub-heading are for how to install and build the project manually.
+It is recommended to install this extension directly from the [chrome web store](https://chromewebstore.google.com/detail/obsidian-browser-interfac/eciohhdfhkkihkiiefldkejohdoghogo). The rest of the instructions under this sub-heading are for how to install and build the project manually.
 
 ### Manual Installation
 
@@ -38,9 +38,7 @@ To build and zip the project for distribution with the chrome web store
 
 - Set new versions in `package.json` and `manifest.json`
 
-- Run `npm i`.
-
-- Run `npm run zip`.
+- Run `npm run build`.
 
 ## Browser Compatibility
 
@@ -48,17 +46,15 @@ Brave: go to `brave://flags` and manually enable the following flags:
 
 1. `#file-system-access-api`
 
-2. `#file-system-access-persistant-permission`
+2. `#file-system-access-persistant-permission-updated-page-info`
 
 3. `#file-system-observer`
 
-Chromium: go to `chrome://flags` and manually enable the following flags:
+Chrome / Chromium: go to `chrome://flags` and manually enable the following flags:
 
-1. `#permission-storage-access-api`
+1. `#file-system-access-persistant-permission-updated-page-info`
 
-2. `#file-system-access-persistant-permission`
-
-3. `#file-system-observer`
+2. `#file-system-observer`
 
 ## Screenshot
 ![chrome extension screenshot](screenshot.png)
