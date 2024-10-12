@@ -1,14 +1,16 @@
 {
-  "name": "obsidian-browser-interface-extension",
+  "name": "browser-interface",
   "private": true,
-  "version": "1.1.6",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "./scripts/build.sh && tsc && vite build",
+    "build:internal": "./scripts/build.sh && tsc && vite build",
+    "build": "npm run build:internal && npm run zip && npm run rename-helpers",
     "preview": "vite preview",
     "check": "tsc --noEmit",
-    "zip": "npm i && npm run build && zip -r obsidian-browser-interface-extension.zip dist"
+    "rename-helpers": "./scripts/rename-helpers.sh",
+    "zip": "zip -r obsidian-browser-interface-extension.zip dist"
   },
   "dependencies": {
     "crypto-js": "^4.2.0",

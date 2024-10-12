@@ -1,6 +1,30 @@
 import {clearDirectory} from './directory'
 import {formatTabs} from './format-data'
-import {jsonToMarkdown} from './markdown'
+import {jsonToMarkdown, markdownToJson} from './markdown'
+
+export async function getDirectoryEntries(
+  directoryHandle: FileSystemDirectoryHandle,
+  currentDirectory: string[]
+): Promise<[[string, FileSystemDirectoryHandle][], [string, FileSystemFileHandle][]]> {
+  const handle = await getSubDirectoryHandle(directoryHandle, currentDirectory)
+  const directories = []
+  const files = []
+  for await (const entry of handle.entries()) {
+    if (entry[1].kind === 'directory')
+      directories.push(entry as [string, FileSystemDirectoryHandle])
+    if (entry[1].kind === 'file') files.push(entry as [string, FileSystemFileHandle])
+  }
+  return [directories, files]
+}
+
+export async function loadFile(fileHandle: FileSystemFileHandle) {
+  const file = await fileHandle.getFile()
+  const reader = new FileReader()
+  reader.readAsText(file)
+  await new Promise(resolve => (reader.onloadend = resolve))
+  if (reader.result === null) return []
+  return markdownToJson(reader.result)
+}
 
 export async function saveWindow(
   directoryHandle: FileSystemDirectoryHandle,
