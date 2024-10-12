@@ -2,6 +2,7 @@ import {SHA256, enc} from 'crypto-js'
 import {getDirectoryHandle} from './utils/directory'
 import {saveAllWindows, getSubDirectoryHandle} from './utils/save-window'
 import {Tab} from './utils/format-data'
+import {createWindowWithTabs} from './utils/create-window'
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
 chrome.runtime.onMessage.addListener(message => {
@@ -125,27 +126,6 @@ async function handleOpenQueueFile(handle: FileSystemFileHandle) {
     directoryHandle.removeEntry(handle.name)
   } catch (error) {
     throw new Error(`handleOpenQueueFile: ${error}`)
-  }
-}
-
-async function createWindowWithTabs(tabs: Tab[]): Promise<void> {
-  try {
-    const window = await chrome.windows.create({focused: true})
-
-    await Promise.all(
-      tabs.map((tab, index) => {
-        chrome.tabs.create({
-          windowId: window.id,
-          url: tab.url,
-          active: index === 0,
-        })
-      })
-    )
-
-    if (window.tabs === undefined || window.tabs[0].id === undefined) return
-    chrome.tabs.remove(window.tabs[0].id)
-  } catch (error) {
-    throw new Error(`createWindowWithTabs: ${error}`)
   }
 }
 
