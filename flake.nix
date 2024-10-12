@@ -25,7 +25,7 @@
           zip = nixpkgs-23-11.zip;
         };
         devShells.default = nixpkgs-23-11.mkShell {
-          name = "obisidian-browser-interface-extension";
+          name = "browser-interface";
           buildInputs = with packages; [
             nodejs
             prettier

@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "check": "tsc --noEmit",
     "rename-helpers": "./scripts/rename-helpers.sh",
-    "zip": "zip -r obsidian-browser-interface-extension.zip dist"
+    "zip": "zip -r browser-interface.zip dist"
   },
   "dependencies": {
     "crypto-js": "^4.2.0",

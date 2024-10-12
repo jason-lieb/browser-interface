@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 service-worker/utils
-obsidian-browser-interface-extension.zip
+browser-interface.zip
