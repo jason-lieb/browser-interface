@@ -50,6 +50,10 @@ Brave: go to `brave://flags` and manually enable the following flags:
 
 3. `#file-system-observer`
 
+Also, if you would like to enable pinned tabs showing up in all windows, enable the following flag:
+
+- `#brave-shared-pinned-tabs`
+
 Chrome / Chromium: go to `chrome://flags` and manually enable the following flags:
 
 1. `#file-system-access-persistant-permission-updated-page-info`
