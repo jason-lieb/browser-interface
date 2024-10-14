@@ -1,4 +1,4 @@
-import {Tab} from './format-data'
+import {Tab} from './format-tabs'
 
 type Column =
   | '`BUTTON[browser-interface-extension-open-window]`'

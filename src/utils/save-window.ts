@@ -1,30 +1,7 @@
 import {clearDirectory} from './directory'
-import {formatTabs} from './format-data'
-import {jsonToMarkdown, markdownToJson} from './markdown'
-
-export async function getDirectoryEntries(
-  directoryHandle: FileSystemDirectoryHandle,
-  currentDirectory: string[]
-): Promise<[[string, FileSystemDirectoryHandle][], [string, FileSystemFileHandle][]]> {
-  const handle = await getSubDirectoryHandle(directoryHandle, currentDirectory)
-  const directories = []
-  const files = []
-  for await (const entry of handle.entries()) {
-    if (entry[1].kind === 'directory')
-      directories.push(entry as [string, FileSystemDirectoryHandle])
-    if (entry[1].kind === 'file') files.push(entry as [string, FileSystemFileHandle])
-  }
-  return [directories, files]
-}
-
-export async function loadFile(fileHandle: FileSystemFileHandle) {
-  const file = await fileHandle.getFile()
-  const reader = new FileReader()
-  reader.readAsText(file)
-  await new Promise(resolve => (reader.onloadend = resolve))
-  if (reader.result === null) return []
-  return markdownToJson(reader.result)
-}
+import {fileExists, getSubDirectoryHandle} from './file-helpers'
+import {formatTabs} from './format-tabs'
+import {jsonToMarkdown} from './markdown'
 
 export async function saveWindow(
   directoryHandle: FileSystemDirectoryHandle,
@@ -97,33 +74,5 @@ export async function saveAllWindows(subDirectoryHandle: FileSystemDirectoryHand
     }
   } catch (err) {
     console.error('saveAllWindows: ', err)
-  }
-}
-
-export async function getSubDirectoryHandle(
-  existingDirectoryHandle: FileSystemDirectoryHandle,
-  directoryNames: string[]
-): Promise<FileSystemDirectoryHandle> {
-  if (directoryNames.length === 0) return existingDirectoryHandle
-  const directoryHandles: FileSystemDirectoryHandle[] = [existingDirectoryHandle]
-
-  for (const directoryName of directoryNames) {
-    directoryHandles.push(
-      await directoryHandles[directoryHandles.length - 1].getDirectoryHandle(directoryName, {
-        create: true,
-      })
-    )
-  }
-  return directoryHandles.pop() as FileSystemDirectoryHandle
-}
-
-async function fileExists(
-  directoryHandle: FileSystemDirectoryHandle,
-  fileName: string
-): Promise<FileSystemFileHandle | null> {
-  try {
-    return await directoryHandle.getFileHandle(fileName)
-  } catch (err) {
-    return null
   }
 }

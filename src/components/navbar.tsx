@@ -1,31 +1,20 @@
 import * as React from 'react'
+import {useNavPage} from '../state'
 
 export type NavPage = 'settings' | 'save' | 'browse'
 
-type Props = {
-  navPage: NavPage
-  setNavPage: React.Dispatch<React.SetStateAction<NavPage>>
-}
-
-export function NavBar({navPage, setNavPage}: Props) {
+export function NavBar() {
   return (
     <div id="navbar">
-      <NavButton page={'settings'} navPage={navPage} setNavPage={setNavPage} />
-      <NavButton page={'save'} navPage={navPage} setNavPage={setNavPage} />
-      <NavButton page={'browse'} navPage={navPage} setNavPage={setNavPage} />
+      <NavButton page="settings" />
+      <NavButton page="save" />
+      <NavButton page="browse" />
     </div>
   )
 }
 
-function NavButton({
-  navPage,
-  setNavPage,
-  page,
-}: {
-  navPage: NavPage
-  setNavPage: React.Dispatch<React.SetStateAction<NavPage>>
-  page: NavPage
-}) {
+function NavButton({page}: {page: NavPage}) {
+  const {navPage, setNavPage} = useNavPage()
   return (
     <button
       className={`navbar-button outline ${navPage === page ? 'primary' : 'secondary'}`}

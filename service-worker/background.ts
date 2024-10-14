@@ -1,10 +1,17 @@
 import {SHA256, enc} from 'crypto-js'
-import {getDirectoryHandle} from './utils/directory'
-import {saveAllWindows, getSubDirectoryHandle} from './utils/save-window'
-import {Tab} from './utils/format-data'
+import {getDirectoryHandle} from './utils/indexed-db'
+import {getSubDirectoryHandle} from './utils/file-helpers'
+import {saveAllWindows} from './utils/save-window'
+import {Tab} from './utils/format-tabs'
 import {createWindowWithTabs} from './utils/create-window'
+import {pinTab} from './utils/pin-tab'
 
-chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
+chrome.action.onClicked.addListener(() =>
+  chrome.runtime.openOptionsPage(() => {
+    if (pinSetting) pinTab()
+  })
+)
+
 chrome.runtime.onMessage.addListener(message => {
   switch (message) {
     case 'New Directory Handle':
@@ -16,6 +23,9 @@ chrome.runtime.onMessage.addListener(message => {
     case 'Manually Run Backup':
       backupOpenWindows()
       break
+    case 'Update Pin Setting':
+      loadPinSetting()
+      break
     default:
       backgroundLog('Unexpected message: ', message)
   }
@@ -23,6 +33,7 @@ chrome.runtime.onMessage.addListener(message => {
 
 let directoryHandle: FileSystemDirectoryHandle | undefined
 let backupSubdirectory: string | undefined
+let pinSetting: boolean | undefined
 const processedFiles = new Set<string>()
 
 const DEFAULT_BACKUP_FREQUENCY = 5 * 60 * 1000
@@ -31,6 +42,7 @@ init()
 setInterval(backupOpenWindows, DEFAULT_BACKUP_FREQUENCY)
 
 async function init() {
+  loadPinSetting()
   directoryHandle = await getDirectoryHandle()
   if (directoryHandle === undefined) return
   loadBackupDirectory()
@@ -46,6 +58,15 @@ function loadBackupDirectory() {
     } else {
       backgroundLog('Backup directory not found')
       backupSubdirectory = undefined
+    }
+  })
+}
+
+function loadPinSetting() {
+  chrome.storage.local.get(['pinSetting'], r => {
+    backgroundLog('Pin setting saved:', r.pinSetting)
+    if (r.pinSetting !== undefined) {
+      pinSetting = r.pinSetting
     }
   })
 }
@@ -72,6 +93,11 @@ async function backupOpenWindows() {
   }
 
   if (subdirectoryHandle === undefined) return
+  const hasTabsToBackup = await checkForTabsToBackup()
+  if (!hasTabsToBackup) {
+    backgroundLog('No tabs to backup')
+    return
+  }
   backgroundLog('Clearing directory and backing up open windows')
   await clearSubdirectory(subdirectoryHandle)
   await saveAllWindows(subdirectoryHandle)
@@ -87,6 +113,14 @@ async function clearSubdirectory(subdirectoryHandle: FileSystemDirectoryHandle) 
   } catch (err) {
     console.error('Error clearing subdirectory entry: ', entryLog, err)
   }
+}
+
+async function checkForTabsToBackup() {
+  const allTabs = await chrome.tabs.query({})
+  const tabs = allTabs.filter(
+    tab => tab.url?.split('://')[0] !== 'chrome' && tab.url?.split('://')[0] !== 'chrome-extension'
+  )
+  return tabs.length > 0
 }
 
 async function searchForOpenQueueFiles() {

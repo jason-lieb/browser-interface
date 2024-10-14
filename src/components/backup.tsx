@@ -3,8 +3,6 @@ import * as React from 'react'
 type Props = {
   backupDirectory: string
   setBackupDirectory: React.Dispatch<React.SetStateAction<string>>
-  isSettingUpBackup: boolean
-  setIsSettingUpBackup: React.Dispatch<React.SetStateAction<boolean>>
   storeBackupDirectory: (backupDirectory: string) => void
   clearBackupDirectory: () => void
 }
@@ -12,12 +10,11 @@ type Props = {
 export function Backup({
   backupDirectory,
   setBackupDirectory,
-  isSettingUpBackup,
-  setIsSettingUpBackup,
   storeBackupDirectory,
   clearBackupDirectory,
 }: Props) {
   const [backupInputText, setBackupInputText] = React.useState('')
+  const [isSettingUpBackup, setIsSettingUpBackup] = React.useState(false)
 
   const handleBackup = (event: React.FormEvent) => {
     event.preventDefault()
@@ -72,8 +69,11 @@ export function Backup({
       <button className="save">Save Backup Subdirectory</button>
     </form>
   ) : (
-    <button className="wide-500" onClick={() => setIsSettingUpBackup(true)}>
-      Setup Subdirectory to Backup Open Windows
-    </button>
+    <>
+      <button className="wide-500" onClick={() => setIsSettingUpBackup(true)}>
+        Setup Subdirectory to Backup Open Windows
+      </button>
+      <br />
+    </>
   )
 }

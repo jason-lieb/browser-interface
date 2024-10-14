@@ -1,29 +1,28 @@
 import * as React from 'react'
 import {clearDirectory} from '../utils/directory'
-import {getDirectoryEntries, loadFile} from '../utils/save-window'
-import {Tab} from '../utils/format-data'
+import {getDirectoryEntries, loadFile} from '../utils/file-helpers'
+import {Tab} from '../utils/format-tabs'
 import {createWindowWithTabs} from '../utils/create-window'
 import {ToggleIcon} from '../components/toggle-icon'
-import {NavBar, NavPage} from '../components/navbar'
+import {NavBar} from '../components/navbar'
+import {useDirectoryHandle} from '../state'
 
 type Props = {
-  directoryHandle: FileSystemDirectoryHandle
-  setDirectoryHandle: (x: FileSystemDirectoryHandle | undefined) => void
-  navPage: NavPage
-  setNavPage: React.Dispatch<React.SetStateAction<NavPage>>
+  backupDirectory: string
 }
 
-export function BrowsePage({directoryHandle, setDirectoryHandle, navPage, setNavPage}: Props) {
+export function BrowsePage({backupDirectory}: Props) {
+  const {directoryHandle, setDirectoryHandle} = useDirectoryHandle()
   const [currentDirectory, setCurrentDirectory] = React.useState<string[]>([])
   const [currentDirectoryHandles, setCurrentDirectoryHandles] = React.useState<
     FileSystemDirectoryHandle[]
-  >([directoryHandle])
+  >([directoryHandle!])
   const currentDirectoryHandle = currentDirectoryHandles[currentDirectoryHandles.length - 1]
   const [directories, setDirectories] = React.useState<[string, FileSystemDirectoryHandle][]>([])
   const [files, setFiles] = React.useState<[string, FileSystemFileHandle][]>([])
 
   function loadDirectoryEntries() {
-    getDirectoryEntries(directoryHandle, currentDirectory).then(
+    getDirectoryEntries(directoryHandle!, currentDirectory).then(
       result => {
         const [directories, files] = result
         setDirectories(directories)
@@ -59,26 +58,35 @@ export function BrowsePage({directoryHandle, setDirectoryHandle, navPage, setNav
     }
   }
 
+  const restoreBackup = () => files.forEach(f => loadFile(f[1]).then(createWindowWithTabs))
+
   return (
     <div id="browseContainer">
-      <NavBar navPage={navPage} setNavPage={setNavPage} />
+      <NavBar />
       <div id="navbarSpacer"></div>
-      <h3 id="filepath">
-        /
-        <LinkButton
-          text={directoryHandle.name}
-          onClick={() => {
-            setCurrentDirectory([])
-            setCurrentDirectoryHandles([directoryHandle])
-          }}
-        />
-        {currentDirectory.map(d => (
-          <>
-            /
-            <LinkButton text={d} onClick={() => jumpDirectory(d, 'backwards')} />
-          </>
-        ))}
-      </h3>
+      <div id="filepath-container">
+        <h3 id="filepath">
+          /
+          <LinkButton
+            text={directoryHandle!.name}
+            onClick={() => {
+              setCurrentDirectory([])
+              setCurrentDirectoryHandles([directoryHandle!])
+            }}
+          />
+          {currentDirectory.map(d => (
+            <>
+              /
+              <LinkButton text={d} onClick={() => jumpDirectory(d, 'backwards')} />
+            </>
+          ))}
+        </h3>
+        {backupDirectory !== '' && currentDirectory.join('/') === backupDirectory && (
+          <button onClick={restoreBackup} id="restore-backup">
+            Restore Backup
+          </button>
+        )}
+      </div>
       <div id="browseResults" className="column-two container-fluid">
         {directories.map(d => (
           <Directory
@@ -171,7 +179,6 @@ function File({
       error => console.error('loadFileError: ', error)
     )
   }, [handle])
-  console.log({tabs})
 
   async function openWindow() {
     try {
