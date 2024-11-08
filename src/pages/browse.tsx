@@ -174,10 +174,9 @@ function File({
   const [tabs, setTabs] = React.useState<Tab[]>([])
   const [collapsed, setCollapsed] = React.useState(true)
   React.useEffect(() => {
-    loadFile(handle).then(
-      t => setTabs(t),
-      error => console.error('loadFileError: ', error)
-    )
+    loadFile(handle)
+      .then(setTabs)
+      .catch(error => console.error('loadFileError: ', error))
   }, [handle])
 
   async function openWindow() {

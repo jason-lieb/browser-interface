@@ -12,11 +12,33 @@ export function App() {
   const {directoryHandle, setDirectoryHandle} = useDirectoryHandle()
   const [backupDirectory, setBackupDirectory] = React.useState('')
   const [directoryInputText, setDirectoryInputText] = React.useState('')
-  const {navPage} = useNavPage()
+  const {navPage, setNavPage} = useNavPage()
 
   React.useEffect(() => {
     loadDirectoryHandle()
     loadBackupDirectory()
+
+    let resetNavPageTimeout: NodeJS.Timeout
+
+    function handleVisibilityChange() {
+      console.log('handleVisibilityChange')
+      if (document.hidden) {
+        console.log('handleVisibilityChange: document hidden')
+        resetNavPageTimeout = setTimeout(() => {
+          setNavPage('save')
+        }, 60 * 1000)
+      } else {
+        console.log('handleVisibilityChange: document not hidden')
+        clearTimeout(resetNavPageTimeout)
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      clearTimeout(resetNavPageTimeout)
+    }
   }, [])
 
   async function loadDirectoryHandle() {
@@ -51,6 +73,7 @@ export function App() {
     event.preventDefault()
     if (directoryHandle) {
       saveWindow(directoryHandle, setDirectoryHandle, directoryInputText)
+      setDirectoryInputText('')
     }
   }
 

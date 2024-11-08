@@ -31,6 +31,12 @@ chrome.runtime.onMessage.addListener(message => {
   }
 })
 
+chrome.tabs.onDetached.addListener((_tabId, event) => {
+  chrome.windows.get(event.oldWindowId, w => {
+    if (w && !w.tabs) chrome.windows.remove(event.oldWindowId)
+  })
+})
+
 let directoryHandle: FileSystemDirectoryHandle | undefined
 let backupSubdirectory: string | undefined
 let pinSetting: boolean | undefined
@@ -73,15 +79,15 @@ function loadPinSetting() {
 
 async function backupOpenWindows() {
   if (directoryHandle === undefined) {
-    backgroundLog('Directory handle is undefined')
+    backgroundLog('Cannot backup windows: directory handle is undefined')
     return
   }
   if (backupSubdirectory === undefined) {
-    backgroundLog('Backup subdirectory is undefined')
+    backgroundLog('Cannot backup windows: backup subdirectory is undefined')
     return
   }
   if (backupSubdirectory === '') {
-    backgroundLog("Directory handle or backup subdirectory is ''")
+    backgroundLog('Cannot backup windows: backup subdirectory is an empty string')
     return
   }
 

@@ -2,7 +2,7 @@
   "name": "Browser Interface",
   "description": "A browser interface for saving windows to the local filesystem.",
   "manifest_version": 3,
-  "version": "1.2.1",
+  "version": "1.2.2",
   "icons": {
     "16": "./icons/icon16.png",
     "48": "./icons/icon48.png",
