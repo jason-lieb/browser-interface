@@ -31,12 +31,6 @@ chrome.runtime.onMessage.addListener(message => {
   }
 })
 
-// chrome.tabs.onDetached.addListener((_tabId, event) => {
-//   chrome.windows.get(event.oldWindowId, w => {
-//     if (w && !w.tabs) chrome.windows.remove(event.oldWindowId)
-//   })
-// })
-
 let directoryHandle: FileSystemDirectoryHandle | undefined
 let backupSubdirectory: string | undefined
 let pinSetting: boolean | undefined
