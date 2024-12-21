@@ -1,16 +1,13 @@
 {
   "name": "browser-interface",
   "private": true,
-  "version": "1.2.4",
+  "version": "1.2.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build:internal": "./scripts/build.sh && tsc && vite build",
-    "build": "npm run build:internal && npm run zip && npm run rename-helpers",
-    "preview": "vite preview",
-    "check": "tsc --noEmit",
-    "rename-helpers": "./scripts/rename-helpers.sh",
-    "zip": "zip -r browser-interface.zip dist"
+    "build:internal": "tsc && vite build",
+    "build": "./scripts/build.sh && npm run build:internal && ./scripts/rename-helpers.sh",
+    "preview": "vite preview"
   },
   "dependencies": {
     "crypto-js": "^4.2.0",

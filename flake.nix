@@ -13,36 +13,60 @@
           inherit system;
           config = { };
         };
-        nixpkgs-24-11 = import inputs.nixpkgs-24-11 nixpkgsArgs;
+        pkgs = import inputs.nixpkgs-24-11 nixpkgsArgs;
       in
       rec {
         packages = {
-          nodejs = nixpkgs-24-11.nodejs_22;
-          typescript = nixpkgs-24-11.typescript;
-          zip = nixpkgs-24-11.zip;
+          nodejs = pkgs.nodejs_22;
+          typescript = pkgs.typescript;
+          zip = pkgs.zip;
+
+          default = pkgs.buildNpmPackage {
+            pname = "browser-interface";
+            version = "1.2.3";
+            src = ./.;
+
+            npmDepsHash = "sha256-NCuEffJRM/Doh1KBgVryDGT/Q/PiYQBSbmDH2Jjxflk=";
+
+            buildScript = pkgs.writeShellScript "build" ''
+              ${builtins.readFile ./scripts/build.sh}
+            '';
+
+            renameHelpersScript = pkgs.writeShellScript "rename-helpers" ''
+              ${builtins.readFile ./scripts/rename-helpers.sh}
+            '';
+
+            buildPhase = ''
+              $buildScript
+              npm run build:internal
+              $renameHelpersScript
+            '';
+
+            installPhase = ''
+              zip -r browser-interface.zip dist
+              mkdir -p $out
+              cp browser-interface.zip $out/browser-interface.zip
+            '';
+
+            nativeBuildInputs = [
+              packages.zip
+            ];
+
+            buildInputs = [
+              packages.nodejs
+              packages.typescript
+            ];
+          };
         };
-        devShells.default = nixpkgs-24-11.mkShell {
+
+        devShells.default = pkgs.mkShell {
           name = "browser-interface";
           buildInputs = with packages; [
             nodejs
             typescript
             zip
           ];
-          shellHook = ''
-            npm install
-          '';
         };
       }
     );
-
-  nixConfig = {
-    extra-substituters = [
-      "https://freckle.cachix.org"
-      "https://freckle-private.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "freckle.cachix.org-1:WnI1pZdwLf2vnP9Fx7OGbVSREqqi4HM2OhNjYmZ7odo="
-      "freckle-private.cachix.org-1:zbTfpeeq5YBCPOjheu0gLyVPVeM6K2dc1e8ei8fE0AI="
-    ];
-  };
 }
