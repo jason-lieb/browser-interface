@@ -25,3 +25,5 @@ dist-ssr
 
 service-worker/utils
 browser-interface.zip
+
+.direnv

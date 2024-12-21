@@ -1,7 +1,6 @@
 {
   inputs = {
-    nixpkgs-23-11.url = "github:nixos/nixpkgs/nixos-23.11";
-    freckle.url = "git+ssh://git@github.com/freckle/flakes?dir=main";
+    nixpkgs-24-11.url = "github:nixos/nixpkgs/nixos-24.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -14,21 +13,18 @@
           inherit system;
           config = { };
         };
-        nixpkgs-23-11 = import inputs.nixpkgs-23-11 nixpkgsArgs;
-        freckle = inputs.freckle.packages.${system};
+        nixpkgs-24-11 = import inputs.nixpkgs-24-11 nixpkgsArgs;
       in
       rec {
         packages = {
-          nodejs = freckle.nodejs-18-19-1;
-          prettier = freckle.prettier-default;
-          typescript = nixpkgs-23-11.typescript;
-          zip = nixpkgs-23-11.zip;
+          nodejs = nixpkgs-24-11.nodejs_22;
+          typescript = nixpkgs-24-11.typescript;
+          zip = nixpkgs-24-11.zip;
         };
-        devShells.default = nixpkgs-23-11.mkShell {
+        devShells.default = nixpkgs-24-11.mkShell {
           name = "browser-interface";
           buildInputs = with packages; [
             nodejs
-            prettier
             typescript
             zip
           ];

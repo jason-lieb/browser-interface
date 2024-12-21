@@ -13,6 +13,7 @@ export function App() {
   const [backupDirectory, setBackupDirectory] = React.useState('')
   const [directoryInputText, setDirectoryInputText] = React.useState('')
   const {navPage, setNavPage} = useNavPage()
+  console.log('TEST')
 
   React.useEffect(() => {
     loadDirectoryHandle()
