@@ -25,21 +25,12 @@
             pname = "browser-interface";
             version = "1.2.4";
             src = ./.;
-
             npmDepsHash = "sha256-NCuEffJRM/Doh1KBgVryDGT/Q/PiYQBSbmDH2Jjxflk=";
 
-            buildScript = pkgs.writeShellScript "build" ''
-              ${builtins.readFile ./scripts/build.sh}
-            '';
-
-            renameHelpersScript = pkgs.writeShellScript "rename-helpers" ''
-              ${builtins.readFile ./scripts/rename-helpers.sh}
-            '';
-
             buildPhase = ''
-              $buildScript
+              ${builtins.readFile ./scripts/build.sh}
               npm run build:internal
-              $renameHelpersScript
+              ${builtins.readFile ./scripts/rename-helpers.sh}
             '';
 
             installPhase = ''

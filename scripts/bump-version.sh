@@ -5,7 +5,6 @@ if [ $# -ne 1 ] || [[ ! "$1" =~ ^(major|minor|patch)$ ]]; then
     exit 1
 fi
 
-# Get current version from package.json
 CURRENT_VERSION=$(grep '"version":' package.json | sed 's/.*"version": "\(.*\)".*/\1/')
 IFS='.' read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
 
