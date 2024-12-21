@@ -28,7 +28,7 @@ It is recommended to install this extension directly from the [chrome web store]
 
 5. Enable Developer Mode by clicking the toggle switch next to "Developer mode".
 
-6. Click the "Load unpacked" button and select the dist folder inside of the directory.
+6. Click the "Load unpacked" button and select the `dist` folder inside of the directory.
 
 7. The extension should now be installed and visible in your extensions list.
 
@@ -36,9 +36,9 @@ It is recommended to install this extension directly from the [chrome web store]
 
 To build and zip the project for distribution with the chrome web store
 
-- Set new versions in `package.json` and `manifest.json`
+- Run `./scripts/bump-version.sh` with the input arguments major, minor, or patch to update the version in `package.json`, `manifest.json`, and `flake.nix`.
 
-- Run `npm run build`.
+- Run `nix build` to build the zip file.
 
 ## Browser Compatibility
 
@@ -61,4 +61,5 @@ Chrome / Chromium: go to `chrome://flags` and manually enable the following flag
 2. `#file-system-observer`
 
 ## Screenshot
+
 ![chrome extension screenshot](screenshot.png)
