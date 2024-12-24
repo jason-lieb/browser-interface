@@ -14,13 +14,12 @@
           config = { };
         };
         pkgs = import inputs.nixpkgs-24-11 nixpkgsArgs;
+        nodejs = pkgs.nodejs_22;
+        typescript = pkgs.typescript;
+        zip = pkgs.zip;
       in
-      rec {
+      {
         packages = {
-          nodejs = pkgs.nodejs_22;
-          typescript = pkgs.typescript;
-          zip = pkgs.zip;
-
           default = pkgs.buildNpmPackage {
             pname = "browser-interface";
             version = "1.2.4";
@@ -40,19 +39,19 @@
             '';
 
             nativeBuildInputs = [
-              packages.zip
+              zip
             ];
 
             buildInputs = [
-              packages.nodejs
-              packages.typescript
+              nodejs
+              typescript
             ];
           };
         };
 
         devShells.default = pkgs.mkShell {
           name = "browser-interface";
-          buildInputs = with packages; [
+          buildInputs = [
             nodejs
             typescript
             zip
