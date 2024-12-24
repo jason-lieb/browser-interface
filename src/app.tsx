@@ -21,14 +21,11 @@ export function App() {
     let resetNavPageTimeout: NodeJS.Timeout
 
     function handleVisibilityChange() {
-      console.log('handleVisibilityChange')
       if (document.hidden) {
-        console.log('handleVisibilityChange: document hidden')
         resetNavPageTimeout = setTimeout(() => {
           setNavPage('save')
         }, 60 * 1000)
       } else {
-        console.log('handleVisibilityChange: document not hidden')
         clearTimeout(resetNavPageTimeout)
       }
     }
@@ -72,7 +69,7 @@ export function App() {
   const handleDirectory = (event: FormEvent) => {
     event.preventDefault()
     if (directoryHandle) {
-      saveWindow(directoryHandle, setDirectoryHandle, directoryInputText)
+      saveWindow(directoryHandle, directoryInputText)
       setDirectoryInputText('')
     }
   }

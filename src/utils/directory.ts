@@ -1,20 +1,20 @@
+import {catchError} from './catch-error'
 import {storeDirectoryHandle} from './indexed-db'
 
 export async function selectDirectory(
   setDirectoryHandle: (directoryHandle: FileSystemDirectoryHandle) => void
 ) {
-  try {
-    const directoryHandle = await window.showDirectoryPicker()
-    try {
-      const storedDirectoryHandle = await storeDirectoryHandle(directoryHandle)
-      chrome.runtime.sendMessage('New Directory Handle')
-      setDirectoryHandle(storedDirectoryHandle)
-    } catch (error) {
-      throw new Error(`storeDirectoryHandle ${error}`)
-    }
-  } catch (error) {
-    throw new Error(`window.showDirectoryPicker ${error}`)
-  }
+  const {data: directoryHandle, error} = await catchError(window.showDirectoryPicker())
+  if (error) throw new Error(`window.showDirectoryPicker: ${error}`)
+
+  const {data: storedDirectoryHandle, error: storeDirectoryHandleError} = await catchError(
+    storeDirectoryHandle(directoryHandle)
+  )
+  if (storeDirectoryHandleError)
+    throw new Error(`storeDirectoryHandle: ${storeDirectoryHandleError}`)
+
+  chrome.runtime.sendMessage('New Directory Handle')
+  setDirectoryHandle(storedDirectoryHandle)
 }
 
 export function clearDirectory(

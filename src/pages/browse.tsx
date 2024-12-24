@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react'
 import {NavBar} from '../components/navbar'
 import {ToggleIcon} from '../components/toggle-icon'
 import {useDirectoryHandle} from '../state'
+import {catchError, labelError, throwError} from '../utils/catch-error'
 import {createWindowWithTabs} from '../utils/create-window'
 import {clearDirectory} from '../utils/directory'
 import {getDirectoryEntries, loadFile} from '../utils/file-helpers'
@@ -22,17 +23,16 @@ export function BrowsePage({backupDirectory}: Props) {
   const [files, setFiles] = useState<[string, FileSystemFileHandle][]>([])
 
   function loadDirectoryEntries() {
-    getDirectoryEntries(directoryHandle!, currentDirectory).then(
-      result => {
+    getDirectoryEntries(directoryHandle!, currentDirectory)
+      .then(result => {
         const [directories, files] = result
         setDirectories(directories)
         setFiles(files)
-      },
-      error => {
+      })
+      .catch(error => {
         console.error('getDirectoryEntriesError: ', error)
         clearDirectory(setDirectoryHandle)
-      }
-    )
+      })
   }
 
   useEffect(() => {
@@ -58,7 +58,10 @@ export function BrowsePage({backupDirectory}: Props) {
     }
   }
 
-  const restoreBackup = () => files.forEach(f => loadFile(f[1]).then(createWindowWithTabs))
+  const restoreBackup = () =>
+    files.forEach(f =>
+      loadFile(f[1]).then(createWindowWithTabs).catch(labelError('restoreBackupError'))
+    )
 
   return (
     <div id="browseContainer">
@@ -127,21 +130,27 @@ function Directory({
   ) => void
 }) {
   async function deleteDirectory() {
-    try {
-      await currentDirectoryHandle.removeEntry(name)
-      loadDirectoryEntries()
-    } catch (error) {
+    const {error: directoryHandleError} = await catchError(currentDirectoryHandle.removeEntry(name))
+    if (directoryHandleError) {
+      console.error('deleteDirectoryError: ', directoryHandleError)
       alert(
         "Currently there is no support for deleting directories that aren't empty. Try again soon."
       )
-      console.error('deleteDirectoryError: ', error)
+      return
     }
+    loadDirectoryEntries()
   }
 
   async function enterDirectory() {
-    const newDirectoryHandle = await currentDirectoryHandle.getDirectoryHandle(name, {
-      create: false,
-    })
+    const {data: newDirectoryHandle, error: newDirectoryHandleError} = await catchError(
+      currentDirectoryHandle.getDirectoryHandle(name, {
+        create: false,
+      })
+    )
+    if (newDirectoryHandleError) {
+      console.error('enterDirectoryError: ', newDirectoryHandleError)
+      return
+    }
     jumpDirectory(name, 'forwards', newDirectoryHandle)
   }
 
@@ -174,20 +183,23 @@ function File({
   const [tabs, setTabs] = useState<TabT[]>([])
   const [collapsed, setCollapsed] = useState(true)
   useEffect(() => {
-    loadFile(handle)
-      .then(setTabs)
-      .catch(error => console.error('loadFileError: ', error))
+    loadFile(handle).then(setTabs).catch(labelError('loadFileError'))
   }, [handle])
 
   async function openWindow() {
-    try {
-      await createWindowWithTabs(tabs)
-      currentDirectoryHandle.removeEntry(name)
-      loadDirectoryEntries()
-    } catch (error) {
-      console.error('openWindowError: ', error)
+    const {error: createWindowWithTabsError} = await catchError(createWindowWithTabs(tabs))
+    if (createWindowWithTabsError) {
+      console.error('openWindowError: ', createWindowWithTabsError)
+      return
     }
+    const {error: removeEntryError} = await catchError(currentDirectoryHandle.removeEntry(name))
+    if (removeEntryError) {
+      console.error('removeEntryError: ', removeEntryError)
+      return
+    }
+    loadDirectoryEntries()
   }
+
   return (
     <div className={`window hover-container ${collapsed ? '' : 'padding-bottom'}`}>
       <ToggleIcon collapsed={collapsed} setCollapsed={setCollapsed} />
@@ -200,7 +212,7 @@ function File({
           <button
             className="open-window danger hover-target"
             onClick={() => {
-              currentDirectoryHandle.removeEntry(name)
+              currentDirectoryHandle.removeEntry(name).catch(throwError('removeEntryError'))
               loadDirectoryEntries()
             }}
           >
@@ -274,8 +286,6 @@ function LinkButton({
 }
 
 function stripExtension(filename: string): string {
-  if (filename.endsWith('.md')) {
-    return filename.slice(0, -3)
-  }
+  if (filename.endsWith('.md')) return filename.slice(0, -3)
   return filename
 }
