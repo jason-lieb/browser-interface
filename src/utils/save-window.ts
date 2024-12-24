@@ -8,7 +8,7 @@ export async function saveWindow(
   setDirectoryHandle: (directoryHandle: FileSystemDirectoryHandle | undefined) => void,
   inputText: string
 ) {
-  const trimmedInputText = inputText.trim()
+  const trimmedInputText = inputText.trim().replace(/[<>:"\\|?*]/g, '')
   if (trimmedInputText === '' || trimmedInputText[0] === '/')
     return alert('Please enter a file path')
 
