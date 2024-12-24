@@ -3,14 +3,9 @@ import {createWindowWithTabs} from './utils/create-window'
 import {getSubDirectoryHandle} from './utils/file-helpers'
 import {TabT} from './utils/format-tabs'
 import {getDirectoryHandle} from './utils/indexed-db'
-import {pinTab} from './utils/pin-tab'
 import {saveAllWindows} from './utils/save-window'
 
-chrome.action.onClicked.addListener(() =>
-  chrome.runtime.openOptionsPage(() => {
-    if (pinSetting) pinTab()
-  })
-)
+chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
 
 chrome.runtime.onMessage.addListener(message => {
   switch (message) {
@@ -23,9 +18,6 @@ chrome.runtime.onMessage.addListener(message => {
     case 'Manually Run Backup':
       backupOpenWindows()
       break
-    case 'Update Pin Setting':
-      loadPinSetting()
-      break
     default:
       backgroundLog('Unexpected message: ', message)
   }
@@ -33,7 +25,6 @@ chrome.runtime.onMessage.addListener(message => {
 
 let directoryHandle: FileSystemDirectoryHandle | undefined
 let backupSubdirectory: string | undefined
-let pinSetting: boolean | undefined
 const processedFiles = new Set<string>()
 
 const DEFAULT_BACKUP_FREQUENCY = 5 * 60 * 1000
@@ -42,7 +33,6 @@ init()
 setInterval(backupOpenWindows, DEFAULT_BACKUP_FREQUENCY)
 
 async function init() {
-  loadPinSetting()
   directoryHandle = await getDirectoryHandle()
   if (directoryHandle === undefined) return
   loadBackupDirectory()
@@ -58,15 +48,6 @@ function loadBackupDirectory() {
     } else {
       backgroundLog('Backup directory not found')
       backupSubdirectory = undefined
-    }
-  })
-}
-
-function loadPinSetting() {
-  chrome.storage.local.get(['pinSetting'], r => {
-    backgroundLog('Pin setting saved:', r.pinSetting)
-    if (r.pinSetting !== undefined) {
-      pinSetting = r.pinSetting
     }
   })
 }

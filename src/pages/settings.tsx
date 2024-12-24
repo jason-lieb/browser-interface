@@ -23,9 +23,8 @@ export function SettingsPage({
   useEffect(
     () =>
       chrome.storage.local.get(['pinSetting'], result => {
-        console.log('Pin Setting:', result)
         if (result.pinSetting !== undefined) setPinSetting(result.pinSetting)
-        // if (result.pinSetting) pinTab()
+        if (result.pinSetting) pinTab()
       }),
     []
   )
@@ -36,10 +35,7 @@ export function SettingsPage({
     } else {
       unpinTab()
     }
-    chrome.storage.local.set({pinSetting}, () => {
-      setPinSetting(pinSetting)
-      chrome.runtime.sendMessage('Update Pin Setting')
-    })
+    chrome.storage.local.set({pinSetting}, () => setPinSetting(pinSetting))
   }
   return (
     <>
