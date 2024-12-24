@@ -6,12 +6,14 @@ import {SettingsPage} from './pages/settings'
 import {useDirectoryHandle, useNavPage} from './state'
 import {selectDirectory} from './utils/directory'
 import {getDirectoryHandle} from './utils/indexed-db'
+import {pinTab} from './utils/pin-tab'
 import {saveWindow} from './utils/save-window'
 
 export function App() {
   const {directoryHandle, setDirectoryHandle} = useDirectoryHandle()
   const [backupDirectory, setBackupDirectory] = useState('')
   const [directoryInputText, setDirectoryInputText] = useState('')
+  const [pinSetting, setPinSetting] = useState(false)
   const {navPage, setNavPage} = useNavPage()
 
   useEffect(() => {
@@ -37,6 +39,15 @@ export function App() {
       clearTimeout(resetNavPageTimeout)
     }
   }, [])
+
+  useEffect(
+    () =>
+      chrome.storage.local.get(['pinSetting'], result => {
+        if (result.pinSetting !== undefined) setPinSetting(result.pinSetting)
+        if (result.pinSetting) pinTab()
+      }),
+    []
+  )
 
   async function loadDirectoryHandle() {
     const directoryHandle = await getDirectoryHandle()
@@ -91,6 +102,8 @@ export function App() {
               setBackupDirectory={setBackupDirectory}
               storeBackupDirectory={storeBackupDirectory}
               clearBackupDirectory={clearBackupDirectory}
+              pinSetting={pinSetting}
+              setPinSetting={setPinSetting}
             />
           ) : (
             <SavePage

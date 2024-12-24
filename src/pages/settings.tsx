@@ -9,6 +9,8 @@ type SettingProps = {
   setBackupDirectory: Dispatch<SetStateAction<string>>
   storeBackupDirectory: (backupDirectory: string) => void
   clearBackupDirectory: () => void
+  pinSetting: boolean
+  setPinSetting: (pinSetting: boolean) => void
 }
 
 export function SettingsPage({
@@ -16,18 +18,10 @@ export function SettingsPage({
   setBackupDirectory,
   storeBackupDirectory,
   clearBackupDirectory,
+  pinSetting,
+  setPinSetting,
 }: SettingProps) {
   const {directoryHandle, setDirectoryHandle} = useDirectoryHandle()
-  const [pinSetting, setPinSetting] = useState(false)
-
-  useEffect(
-    () =>
-      chrome.storage.local.get(['pinSetting'], result => {
-        if (result.pinSetting !== undefined) setPinSetting(result.pinSetting)
-        if (result.pinSetting) pinTab()
-      }),
-    []
-  )
 
   const storePinSetting = (pinSetting: boolean) => {
     if (pinSetting) {
