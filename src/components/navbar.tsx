@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {useNavPage} from '../state'
 
 export type NavPage = 'settings' | 'save' | 'browse'

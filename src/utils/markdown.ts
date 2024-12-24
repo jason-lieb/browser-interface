@@ -1,4 +1,4 @@
-import {Tab} from './format-tabs'
+import {TabT} from './format-tabs'
 
 type Column =
   | '`BUTTON[browser-interface-extension-open-window]`'
@@ -6,7 +6,7 @@ type Column =
   | '`BUTTON[browser-interface-extension-open-tab]`'
   | '`BUTTON[browser-interface-extension-delete-tab]`'
 
-export function jsonToMarkdown(tabs: Tab[]): {headers: string; content: string} {
+export function jsonToMarkdown(tabs: TabT[]): {headers: string; content: string} {
   const columns: Column[] = [
     '`BUTTON[browser-interface-extension-open-window]`',
     'Tabs',
@@ -26,8 +26,8 @@ export function jsonToMarkdown(tabs: Tab[]): {headers: string; content: string} 
   return {headers, content}
 }
 
-function extractDataFromTab(tab: Tab): (header: Column) => string {
-  return function(header: Column) {
+function extractDataFromTab(tab: TabT): (header: Column) => string {
+  return function (header: Column) {
     switch (header) {
       case '`BUTTON[browser-interface-extension-open-window]`':
         return tab.favIconUrl !== undefined && tab.favIconUrl !== ''
@@ -45,7 +45,7 @@ function extractDataFromTab(tab: Tab): (header: Column) => string {
   }
 }
 
-export function markdownToJson(markdown: string | ArrayBuffer | null): Tab[] {
+export function markdownToJson(markdown: string | ArrayBuffer | null): TabT[] {
   if (markdown === null) return []
   let markdownString: string
   if (markdown instanceof ArrayBuffer) {
@@ -56,7 +56,7 @@ export function markdownToJson(markdown: string | ArrayBuffer | null): Tab[] {
   }
 
   const rows = markdownString.split('\n').slice(2)
-  const tabs: Tab[] = []
+  const tabs: TabT[] = []
 
   for (const row of rows) {
     if (row.trim() === '') continue
@@ -65,7 +65,7 @@ export function markdownToJson(markdown: string | ArrayBuffer | null): Tab[] {
       .split('|')
       .map(col => col.trim())
       .slice(1, -1)
-    const tab: Tab = {
+    const tab: TabT = {
       favIconUrl: extractFavIconUrl(columns[0]),
       title: extractTitle(columns[1]),
       url: extractUrl(columns[1]),

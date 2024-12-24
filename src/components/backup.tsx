@@ -1,8 +1,8 @@
-import * as React from 'react'
+import {Dispatch, FormEvent, SetStateAction, useState} from 'react'
 
 type Props = {
   backupDirectory: string
-  setBackupDirectory: React.Dispatch<React.SetStateAction<string>>
+  setBackupDirectory: Dispatch<SetStateAction<string>>
   storeBackupDirectory: (backupDirectory: string) => void
   clearBackupDirectory: () => void
 }
@@ -13,10 +13,10 @@ export function Backup({
   storeBackupDirectory,
   clearBackupDirectory,
 }: Props) {
-  const [backupInputText, setBackupInputText] = React.useState('')
-  const [isSettingUpBackup, setIsSettingUpBackup] = React.useState(false)
+  const [backupInputText, setBackupInputText] = useState('')
+  const [isSettingUpBackup, setIsSettingUpBackup] = useState(false)
 
-  const handleBackup = (event: React.FormEvent) => {
+  const handleBackup = (event: FormEvent) => {
     event.preventDefault()
     const backupDirectory = backupInputText
       .split('/')

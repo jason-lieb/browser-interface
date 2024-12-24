@@ -1,6 +1,6 @@
-import {Tab} from './format-tabs'
+import {TabT} from './format-tabs'
 
-export async function createWindowWithTabs(tabs: Tab[]): Promise<void> {
+export async function createWindowWithTabs(tabs: TabT[]): Promise<void> {
   if (tabs.length === 0) return
 
   try {

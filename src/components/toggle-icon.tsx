@@ -1,8 +1,8 @@
-import * as React from 'react'
+import {Dispatch, SetStateAction} from 'react'
 
 type Props = {
   collapsed: boolean
-  setCollapsed: React.Dispatch<React.SetStateAction<boolean>>
+  setCollapsed: Dispatch<SetStateAction<boolean>>
 }
 
 export function ToggleIcon({collapsed, setCollapsed}: Props) {

@@ -1,11 +1,11 @@
-import * as React from 'react'
+import {useEffect, useState} from 'react'
+import {NavBar} from '../components/navbar'
+import {ToggleIcon} from '../components/toggle-icon'
+import {useDirectoryHandle} from '../state'
+import {createWindowWithTabs} from '../utils/create-window'
 import {clearDirectory} from '../utils/directory'
 import {getDirectoryEntries, loadFile} from '../utils/file-helpers'
-import {Tab} from '../utils/format-tabs'
-import {createWindowWithTabs} from '../utils/create-window'
-import {ToggleIcon} from '../components/toggle-icon'
-import {NavBar} from '../components/navbar'
-import {useDirectoryHandle} from '../state'
+import {TabT} from '../utils/format-tabs'
 
 type Props = {
   backupDirectory: string
@@ -13,13 +13,13 @@ type Props = {
 
 export function BrowsePage({backupDirectory}: Props) {
   const {directoryHandle, setDirectoryHandle} = useDirectoryHandle()
-  const [currentDirectory, setCurrentDirectory] = React.useState<string[]>([])
-  const [currentDirectoryHandles, setCurrentDirectoryHandles] = React.useState<
+  const [currentDirectory, setCurrentDirectory] = useState<string[]>([])
+  const [currentDirectoryHandles, setCurrentDirectoryHandles] = useState<
     FileSystemDirectoryHandle[]
   >([directoryHandle!])
   const currentDirectoryHandle = currentDirectoryHandles[currentDirectoryHandles.length - 1]
-  const [directories, setDirectories] = React.useState<[string, FileSystemDirectoryHandle][]>([])
-  const [files, setFiles] = React.useState<[string, FileSystemFileHandle][]>([])
+  const [directories, setDirectories] = useState<[string, FileSystemDirectoryHandle][]>([])
+  const [files, setFiles] = useState<[string, FileSystemFileHandle][]>([])
 
   function loadDirectoryEntries() {
     getDirectoryEntries(directoryHandle!, currentDirectory).then(
@@ -35,7 +35,7 @@ export function BrowsePage({backupDirectory}: Props) {
     )
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadDirectoryEntries()
   }, [directoryHandle, currentDirectory])
 
@@ -171,9 +171,9 @@ function File({
   currentDirectoryHandle: FileSystemDirectoryHandle
   loadDirectoryEntries: () => void
 }) {
-  const [tabs, setTabs] = React.useState<Tab[]>([])
-  const [collapsed, setCollapsed] = React.useState(true)
-  React.useEffect(() => {
+  const [tabs, setTabs] = useState<TabT[]>([])
+  const [collapsed, setCollapsed] = useState(true)
+  useEffect(() => {
     loadFile(handle)
       .then(setTabs)
       .catch(error => console.error('loadFileError: ', error))
@@ -213,7 +213,7 @@ function File({
   )
 }
 
-function Tabs({tabs}: {tabs: Tab[]}) {
+function Tabs({tabs}: {tabs: TabT[]}) {
   return (
     <div>
       {tabs.map(tab => (
@@ -223,7 +223,7 @@ function Tabs({tabs}: {tabs: Tab[]}) {
   )
 }
 
-function Tab({title, url, favIconUrl}: Tab) {
+function Tab({title, url, favIconUrl}: TabT) {
   return (
     <>
       {/* <div className={groupStyles}></div> */}

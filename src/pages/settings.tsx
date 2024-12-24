@@ -1,12 +1,12 @@
-import * as React from 'react'
+import {Dispatch, SetStateAction, useEffect, useState} from 'react'
+import {Backup} from '../components/backup'
 import {useDirectoryHandle} from '../state'
 import {clearDirectory} from '../utils/directory'
 import {pinTab, unpinTab} from '../utils/pin-tab'
-import {Backup} from '../components/backup'
 
 type SettingProps = {
   backupDirectory: string
-  setBackupDirectory: React.Dispatch<React.SetStateAction<string>>
+  setBackupDirectory: Dispatch<SetStateAction<string>>
   storeBackupDirectory: (backupDirectory: string) => void
   clearBackupDirectory: () => void
 }
@@ -18,12 +18,14 @@ export function SettingsPage({
   clearBackupDirectory,
 }: SettingProps) {
   const {directoryHandle, setDirectoryHandle} = useDirectoryHandle()
-  const [pinSetting, setPinSetting] = React.useState(false)
+  const [pinSetting, setPinSetting] = useState(false)
 
-  React.useEffect(
+  useEffect(
     () =>
       chrome.storage.local.get(['pinSetting'], result => {
+        console.log('Pin Setting:', result)
         if (result.pinSetting !== undefined) setPinSetting(result.pinSetting)
+        // if (result.pinSetting) pinTab()
       }),
     []
   )

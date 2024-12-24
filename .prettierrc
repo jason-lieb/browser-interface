@@ -13,5 +13,7 @@
   "insertPragma": false,
   "proseWrap": "preserve",
   "htmlWhitespaceSensitivity": "css",
-  "endOfLine": "auto"
+  "endOfLine": "auto",
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "importOrder": ["^react$", "react-dom", "<THIRD_PARTY_MODULES>", "[./]"]
 }

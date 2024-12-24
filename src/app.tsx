@@ -1,21 +1,20 @@
-import * as React from 'react'
+import {FormEvent, useEffect, useState} from 'react'
+import {NavBar} from './components/navbar'
+import {BrowsePage} from './pages/browse'
+import {SavePage} from './pages/save'
+import {SettingsPage} from './pages/settings'
+import {useDirectoryHandle, useNavPage} from './state'
 import {selectDirectory} from './utils/directory'
 import {getDirectoryHandle} from './utils/indexed-db'
 import {saveWindow} from './utils/save-window'
-import {BrowsePage} from './pages/browse'
-import {NavBar} from './components/navbar'
-import {useDirectoryHandle, useNavPage} from './state'
-import {SettingsPage} from './pages/settings'
-import {SavePage} from './pages/save'
 
 export function App() {
   const {directoryHandle, setDirectoryHandle} = useDirectoryHandle()
-  const [backupDirectory, setBackupDirectory] = React.useState('')
-  const [directoryInputText, setDirectoryInputText] = React.useState('')
+  const [backupDirectory, setBackupDirectory] = useState('')
+  const [directoryInputText, setDirectoryInputText] = useState('')
   const {navPage, setNavPage} = useNavPage()
-  console.log('TEST')
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadDirectoryHandle()
     loadBackupDirectory()
 
@@ -70,7 +69,7 @@ export function App() {
     storeBackupDirectory('')
   }
 
-  const handleDirectory = (event: React.FormEvent) => {
+  const handleDirectory = (event: FormEvent) => {
     event.preventDefault()
     if (directoryHandle) {
       saveWindow(directoryHandle, setDirectoryHandle, directoryInputText)

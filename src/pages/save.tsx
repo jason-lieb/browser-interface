@@ -1,9 +1,9 @@
-import * as React from 'react'
+import {Dispatch, FormEvent, SetStateAction} from 'react'
 
 type SavePageProps = {
   directoryInputText: string
-  setDirectoryInputText: React.Dispatch<React.SetStateAction<string>>
-  handleDirectory: (event: React.FormEvent) => void
+  setDirectoryInputText: Dispatch<SetStateAction<string>>
+  handleDirectory: (event: FormEvent) => void
 }
 
 export function SavePage({

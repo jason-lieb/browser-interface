@@ -1,10 +1,10 @@
 import {SHA256, enc} from 'crypto-js'
-import {getDirectoryHandle} from './utils/indexed-db'
-import {getSubDirectoryHandle} from './utils/file-helpers'
-import {saveAllWindows} from './utils/save-window'
-import {Tab} from './utils/format-tabs'
 import {createWindowWithTabs} from './utils/create-window'
+import {getSubDirectoryHandle} from './utils/file-helpers'
+import {TabT} from './utils/format-tabs'
+import {getDirectoryHandle} from './utils/indexed-db'
 import {pinTab} from './utils/pin-tab'
+import {saveAllWindows} from './utils/save-window'
 
 chrome.action.onClicked.addListener(() =>
   chrome.runtime.openOptionsPage(() => {
@@ -148,7 +148,7 @@ async function handleOpenQueueFile(handle: FileSystemFileHandle) {
     return
   }
 
-  const tabs: Tab[] = JSON.parse(contents)
+  const tabs: TabT[] = JSON.parse(contents)
 
   try {
     processedFiles.add(hash)
