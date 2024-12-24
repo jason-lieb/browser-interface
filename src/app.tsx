@@ -66,11 +66,13 @@ export function App() {
     storeBackupDirectory('')
   }
 
-  const handleDirectory = (event: FormEvent) => {
+  const handleDirectory = (cb: () => void) => (event: FormEvent) => {
     event.preventDefault()
     if (directoryHandle) {
-      saveWindow(directoryHandle, directoryInputText)
-      setDirectoryInputText('')
+      saveWindow(directoryHandle, directoryInputText).then(() => {
+        setDirectoryInputText('')
+        cb()
+      })
     }
   }
 

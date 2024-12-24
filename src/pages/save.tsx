@@ -1,9 +1,9 @@
-import {Dispatch, FormEvent, SetStateAction} from 'react'
+import {Dispatch, FormEvent, SetStateAction, useRef} from 'react'
 
 type SavePageProps = {
   directoryInputText: string
   setDirectoryInputText: Dispatch<SetStateAction<string>>
-  handleDirectory: (event: FormEvent) => void
+  handleDirectory: (cb: () => void) => (event: FormEvent) => void
 }
 
 export function SavePage({
@@ -11,13 +11,15 @@ export function SavePage({
   setDirectoryInputText,
   handleDirectory,
 }: SavePageProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
   return (
-    <form onSubmit={handleDirectory}>
+    <form onSubmit={handleDirectory(() => inputRef.current?.focus())}>
       <div className="row">
         <label htmlFor="directoryInputText">
           <b>File Path: </b>
         </label>
         <input
+          ref={inputRef}
           id="directoryInputText"
           type="text"
           autoFocus
