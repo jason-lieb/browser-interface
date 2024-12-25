@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs-24-11.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -9,11 +9,7 @@
     inputs.flake-utils.lib.eachDefaultSystem (
       system:
       let
-        nixpkgsArgs = {
-          inherit system;
-          config = { };
-        };
-        pkgs = import inputs.nixpkgs-24-11 nixpkgsArgs;
+        pkgs = import inputs.nixpkgs { inherit system; };
         nodejs = pkgs.nodejs_22;
         typescript = pkgs.typescript;
         zip = pkgs.zip;
@@ -24,7 +20,7 @@
             pname = "browser-interface";
             version = "1.2.4";
             src = ./.;
-            npmDepsHash = "sha256-NCuEffJRM/Doh1KBgVryDGT/Q/PiYQBSbmDH2Jjxflk=";
+            npmDepsHash = "sha256-kJvxigLUHh3Eoh1Ef7xD4d5hrgM7Oyu2DCaDDQQQkbA=";
 
             buildPhase = ''
               ${builtins.readFile ./scripts/build.sh}
