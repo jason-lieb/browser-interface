@@ -1,4 +1,4 @@
-import {Dispatch, FormEvent, SetStateAction, useRef} from 'react'
+import {Dispatch, FormEvent, SetStateAction, useEffect, useRef} from 'react'
 
 type SavePageProps = {
   directoryInputText: string
@@ -12,6 +12,13 @@ export function SavePage({
   handleDirectory,
 }: SavePageProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const focusInput = () => inputRef.current?.focus()
+    document.addEventListener('visibilitychange', focusInput)
+    return () => document.removeEventListener('visibilitychange', focusInput)
+  }, [inputRef])
+
   return (
     <form onSubmit={handleDirectory(() => inputRef.current?.focus())}>
       <div className="row">
