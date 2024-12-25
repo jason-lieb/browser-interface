@@ -8,7 +8,7 @@ export async function createWindowWithTabs(tabs: TabT[]) {
   if (error) throw new Error(`createWindowWithTabsError: ${error}`)
 
   await Promise.all(
-    tabs.map((tab, index) => {
+    tabs.map((tab, index) =>
       chrome.tabs
         .create({
           windowId: window.id,
@@ -16,7 +16,7 @@ export async function createWindowWithTabs(tabs: TabT[]) {
           active: index === 0,
         })
         .catch(labelError(`Error creating tab ${index}`))
-    })
+    )
   )
 
   if (window.tabs === undefined || window.tabs[0].id === undefined)

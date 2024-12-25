@@ -13,7 +13,12 @@ export async function saveWindow(directoryHandle: FileSystemDirectoryHandle, inp
   if (window.id === undefined || window.tabs === undefined)
     throw new Error('Window has no id or tabs')
 
-  const tabs = formatTabs(window.tabs)
+  const filteredTabs = window.tabs.filter(tab => {
+    const url = tab.url?.split('://')[0]
+    return url !== 'chrome-extension' && url !== 'chrome'
+  })
+
+  const tabs = formatTabs(filteredTabs)
   const {headers, content} = jsonToMarkdown(tabs)
 
   const formattedInputText = trimmedInputText
