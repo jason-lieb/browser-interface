@@ -18,6 +18,7 @@ chrome.runtime.onMessage.addListener(message => {
       break
     case 'Manually Run Backup':
       backupOpenWindows()
+    case 'Request Permission':
       break
     default:
       backgroundLog('Unexpected message: ', message)
@@ -118,7 +119,6 @@ async function searchForOpenQueueFiles() {
         console.error('Error getting file handle for ', entry, ': ', error)
         continue
       }
-      backgroundLog('File handle: ', fileHandle)
 
       const {error: handleOpenQueueFileError} = await catchError(handleOpenQueueFile(fileHandle))
       if (handleOpenQueueFileError) {
@@ -137,7 +137,7 @@ async function deleteOpenQueueFiles() {
   for (const fileName of filesToDelete) {
     const {error} = await catchError(directoryHandle.removeEntry(fileName))
     if (error) {
-      console.error(`Permission not granted: ${error}`)
+      chrome.runtime.sendMessage('Request Permission')
       continue
     }
     filesToDelete.delete(fileName)
@@ -180,21 +180,8 @@ async function deleteOpenQueueFile(direcotoryHandle: FileSystemDirectoryHandle, 
   filesToDelete.add(fileName)
   const {error} = await catchError(direcotoryHandle.removeEntry(fileName))
   if (error) {
-    const {data: permission, error: permissionError} = await catchError(
-      direcotoryHandle.requestPermission({mode: 'readwrite'})
-    )
-    if (permissionError) {
-      throw new Error('Error requesting write permission:', permissionError)
-    }
-    if (permission === 'granted') {
-      const {error} = await catchError(direcotoryHandle.removeEntry(fileName))
-      if (error)
-        throw new Error(
-          `Error removing file after requesting write permission - ${fileName}: ${error}`
-        )
-    } else {
-      throw new Error(`Permission not granted: ${error}`)
-    }
+    chrome.runtime.sendMessage('Request Permission')
+    return
   }
   filesToDelete.delete(fileName)
 }

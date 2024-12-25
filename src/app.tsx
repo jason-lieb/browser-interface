@@ -1,10 +1,11 @@
-import {FormEvent, useEffect, useState} from 'react'
+import {FormEvent, useCallback, useEffect, useState} from 'react'
 import {NavBar} from './components/navbar'
 import {BrowsePage} from './pages/browse'
 import {SavePage} from './pages/save'
 import {SettingsPage} from './pages/settings'
 import {useDirectoryHandle, useNavPage} from './state'
-import {selectDirectory} from './utils/directory'
+import {catchError} from './utils/catch-error'
+import {clearDirectory, selectDirectory} from './utils/directory'
 import {getDirectoryHandle} from './utils/indexed-db'
 import {pinTab} from './utils/pin-tab'
 import {saveWindow} from './utils/save-window'
@@ -14,7 +15,29 @@ export function App() {
   const [backupDirectory, setBackupDirectory] = useState('')
   const [directoryInputText, setDirectoryInputText] = useState('')
   const [pinSetting, setPinSetting] = useState(false)
+  const [requestPermissionModalOpen, setRequestPermissionModalOpen] = useState(false)
   const {navPage, setNavPage} = useNavPage()
+
+  const messageHandler = useCallback(
+    (message: string) => {
+      switch (message) {
+        case 'Request Permission':
+          if (directoryHandle) setRequestPermissionModalOpen(true)
+        case 'New Directory Handle':
+        case 'Changed Backup Directory':
+        case 'Manually Run Backup':
+          break
+        default:
+          console.log('Unexpected message: ', message)
+      }
+    },
+    [setRequestPermissionModalOpen, directoryHandle]
+  )
+
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener(messageHandler)
+    return () => chrome.runtime.onMessage.removeListener(messageHandler)
+  }, [messageHandler])
 
   useEffect(() => {
     loadDirectoryHandle()
@@ -87,10 +110,33 @@ export function App() {
     }
   }
 
+  async function requestPermission() {
+    if (!directoryHandle) return
+    const {error} = await catchError(directoryHandle.requestPermission({mode: 'readwrite'}))
+    if (error) console.error('Error requesting write permission:', error)
+    setRequestPermissionModalOpen(false)
+  }
+
   return (
     <>
       {directoryHandle === undefined ? (
         <button onClick={() => selectDirectory(setDirectoryHandle)}>Select Directory</button>
+      ) : requestPermissionModalOpen ? (
+        <>
+          <button onClick={requestPermission}>Request Permission for Your Directory</button>
+          <hr />
+          <button onClick={() => setRequestPermissionModalOpen(false)}>Cancel</button>
+          <hr />
+          <button
+            onClick={() => {
+              clearBackupDirectory()
+              setRequestPermissionModalOpen(false)
+              clearDirectory(setDirectoryHandle)
+            }}
+          >
+            Clear Directory
+          </button>
+        </>
       ) : navPage === 'browse' ? (
         <BrowsePage backupDirectory={backupDirectory} />
       ) : (

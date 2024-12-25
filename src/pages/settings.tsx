@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction, useEffect, useState} from 'react'
+import {Dispatch, SetStateAction} from 'react'
 import {Backup} from '../components/backup'
 import {useDirectoryHandle} from '../state'
 import {clearDirectory} from '../utils/directory'
@@ -31,6 +31,7 @@ export function SettingsPage({
     }
     chrome.storage.local.set({pinSetting}, () => setPinSetting(pinSetting))
   }
+
   return (
     <>
       <div className="row">
