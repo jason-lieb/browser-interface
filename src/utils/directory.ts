@@ -1,4 +1,4 @@
-import {catchError} from './catch-error'
+import {catchError} from './error'
 import {storeDirectoryHandle} from './indexed-db'
 
 export async function selectDirectory(

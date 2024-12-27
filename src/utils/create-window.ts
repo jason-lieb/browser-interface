@@ -1,4 +1,4 @@
-import {catchError, labelError, throwError} from './catch-error'
+import {catchError, labelError, throwError} from './error'
 import {TabT} from './format-tabs'
 
 export async function createWindowWithTabs(tabs: TabT[]) {

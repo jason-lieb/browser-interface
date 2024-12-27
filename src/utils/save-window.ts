@@ -1,4 +1,4 @@
-import {catchError, labelError} from './catch-error'
+import {catchError, labelError} from './error'
 import {fileExists, getSubDirectoryHandle} from './file-helpers'
 import {formatTabs} from './format-tabs'
 import {jsonToMarkdown} from './markdown'

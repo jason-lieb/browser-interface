@@ -1,4 +1,4 @@
-import {catchError} from './catch-error'
+import {catchError} from './error'
 import {markdownToJson} from './markdown'
 
 export async function getDirectoryEntries(

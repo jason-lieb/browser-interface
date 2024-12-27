@@ -1,4 +1,4 @@
-import {labelError} from './catch-error'
+import {labelError} from './error'
 
 export function pinTab() {
   chrome.tabs.query({active: true, currentWindow: true}, tabs => {
