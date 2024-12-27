@@ -26,7 +26,7 @@ export function App() {
         case 'Request Permission':
           if (directoryHandle) setRequestPermissionModalOpen(true)
           break
-        case 'New Directory Handle':
+        case 'Changed Directory Handle':
         case 'Changed Backup Directory':
         case 'Manually Run Backup':
           break

@@ -26,7 +26,7 @@ chrome.alarms.onAlarm.addListener(alarm => {
 
 chrome.runtime.onMessage.addListener(message => {
   switch (message) {
-    case 'New Directory Handle':
+    case 'Changed Directory Handle':
       init()
       break
     case 'Changed Backup Directory':

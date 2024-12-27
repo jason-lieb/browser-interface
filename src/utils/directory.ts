@@ -13,7 +13,7 @@ export async function selectDirectory(
   if (storeDirectoryHandleError)
     throw new Error(`storeDirectoryHandle: ${storeDirectoryHandleError}`)
 
-  chrome.runtime.sendMessage('New Directory Handle')
+  chrome.runtime.sendMessage('Changed Directory Handle')
   setDirectoryHandle(storedDirectoryHandle)
 }
 
@@ -22,4 +22,5 @@ export function clearDirectory(
 ) {
   indexedDB.deleteDatabase('DirectoryHandle')
   setDirectoryHandle(undefined)
+  chrome.runtime.sendMessage('Changed Directory Handle')
 }
