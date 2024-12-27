@@ -23,6 +23,7 @@ export async function backupOpenWindows() {
   backgroundLog('Clearing directory and backing up open windows')
   await clearSubdirectory(subdirectoryHandle)
   await saveAllWindows(subdirectoryHandle)
+  await createLastBackupTimestamp(subdirectoryHandle)
 }
 
 async function clearSubdirectory(subdirectoryHandle: FileSystemDirectoryHandle) {
@@ -45,4 +46,34 @@ async function checkForTabsToBackup() {
     tab => tab.url?.split('://')[0] !== 'chrome' && tab.url?.split('://')[0] !== 'chrome-extension'
   )
   return tabs.length > 0
+}
+
+async function createLastBackupTimestamp(subdirectoryHandle: FileSystemDirectoryHandle) {
+  const timestamp = new Date()
+    .toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    })
+    .replace(/(\d+)\/(\d+)\/(\d+),\s/, '$3-$1-$2 ')
+
+  const {data: fileHandle, error: fileHandleError} = await catchError(
+    subdirectoryHandle.getFileHandle('lastBackupTimestamp.txt', {
+      create: true,
+    })
+  )
+  if (fileHandleError) throw new Error(`Error getting file handle: ${fileHandleError}`)
+
+  const {data: writable, error: writableError} = await catchError(fileHandle.createWritable())
+  if (writableError) throw new Error(`Error creating writable: ${writableError}`)
+
+  const {error: writeError} = await catchError(writable.write(timestamp))
+  if (writeError) throw new Error(`Error writing to file: ${writeError}`)
+
+  const {error: closeError} = await catchError(writable.close())
+  if (closeError) throw new Error(`Error closing file: ${closeError}`)
 }
