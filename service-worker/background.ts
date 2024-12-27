@@ -4,6 +4,7 @@ import {createWindowWithTabs} from './utils/create-window'
 import {getSubDirectoryHandle} from './utils/file-helpers'
 import {TabT} from './utils/format-tabs'
 import {getDirectoryHandle} from './utils/indexed-db'
+import {backgroundLog} from './utils/log'
 import {saveAllWindows} from './utils/save-window'
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
@@ -184,8 +185,4 @@ async function deleteOpenQueueFile(direcotoryHandle: FileSystemDirectoryHandle, 
     return
   }
   filesToDelete.delete(fileName)
-}
-
-function backgroundLog(...args: unknown[]) {
-  console.log(`[Background] `, ...args)
 }
