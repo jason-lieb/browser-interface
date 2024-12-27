@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import {NavBar} from '../components/navbar'
 import {ToggleIcon} from '../components/toggle-icon'
-import {useDirectoryHandle} from '../state'
+import {useDirectoryHandle} from '../store'
 import {createWindowWithTabs} from '../utils/create-window'
 import {clearDirectory} from '../utils/directory'
 import {catchError, labelError, throwError} from '../utils/error'

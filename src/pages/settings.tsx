@@ -1,6 +1,6 @@
 import {Dispatch, SetStateAction} from 'react'
 import {Backup} from '../components/backup'
-import {useDirectoryHandle} from '../state'
+import {useDirectoryHandle} from '../store'
 import {clearDirectory} from '../utils/directory'
 import {pinTab, unpinTab} from '../utils/pin-tab'
 

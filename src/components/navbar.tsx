@@ -1,4 +1,4 @@
-import {useNavPage} from '../state'
+import {useNavPage} from '../store'
 
 export type NavPage = 'settings' | 'save' | 'browse'
 
