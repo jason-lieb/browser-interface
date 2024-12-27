@@ -20,7 +20,7 @@
             pname = "browser-interface";
             version = "1.2.7";
             src = ./.;
-            npmDepsHash = "sha256-eoZ9HXHgAUsbjeq/42NHNjHXLjMQse5z2murOzBJvcI=";
+            npmDepsHash = "sha256-vkWRgeHXO267E4SzurUPxwFGKiGcBew67jf/Fm1DeRQ=";
 
             buildPhase = ''
               ${builtins.readFile ./scripts/build.sh}

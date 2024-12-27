@@ -1,5 +1,8 @@
 # CHANGELOGS
 
+## 1.2.7
+- Make backup process create a timestamp file
+
 ## 1.2.6
 - Fix bug that a pinned tab would get deleted when a new window is created
 
