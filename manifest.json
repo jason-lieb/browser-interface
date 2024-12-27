@@ -19,6 +19,6 @@
     "page": "browser-interface.html",
     "open_in_tab": true
   },
-  "permissions": ["tabs", "storage"],
+  "permissions": ["tabs", "storage", "alarms"],
   "minimum_chrome_version": "88"
 }

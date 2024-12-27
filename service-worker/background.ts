@@ -82,6 +82,28 @@ const storage: StateStorage = {
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
 
+const Alarms = {
+  BackupOpenWindows: 'backupOpenWindows',
+  SearchForOpenQueueFiles: 'searchForOpenQueueFiles',
+  DeleteOpenQueueFiles: 'deleteOpenQueueFiles',
+} as const
+
+chrome.alarms.onAlarm.addListener(alarm => {
+  switch (alarm.name) {
+    case Alarms.BackupOpenWindows:
+      backupOpenWindows()
+      break
+    case Alarms.SearchForOpenQueueFiles:
+      searchForOpenQueueFiles()
+      break
+    case Alarms.DeleteOpenQueueFiles:
+      deleteOpenQueueFiles()
+      break
+    default:
+      backgroundLog('Unexpected alarm: ', alarm.name)
+  }
+})
+
 chrome.runtime.onMessage.addListener(message => {
   switch (message) {
     case 'New Directory Handle':
@@ -99,23 +121,38 @@ chrome.runtime.onMessage.addListener(message => {
   }
 })
 
-const DEFAULT_BACKUP_FREQUENCY = 5 * 60 * 1000
-
 init()
-setInterval(backupOpenWindows, DEFAULT_BACKUP_FREQUENCY)
 
 async function init() {
-  const {data: directoryHandle, error: directoryHandleError} =
-    await catchError(getDirectoryHandle())
-  if (directoryHandleError)
-    throw new Error(`Error getting directory handle: ${directoryHandleError}`)
-
-  store.getState().setDirectoryHandle(directoryHandle)
-  if (directoryHandle === undefined) return
+  await chrome.alarms.clearAll()
+  await loadDirectoryHandle()
+  if (store.getState().directoryHandle === undefined) return
 
   loadBackupSubDirectory()
-  searchForOpenQueueFiles()
-  deleteOpenQueueFiles()
+
+  chrome.alarms.create(Alarms.BackupOpenWindows, {
+    delayInMinutes: 1,
+    periodInMinutes: 5,
+  })
+
+  chrome.alarms.create(Alarms.SearchForOpenQueueFiles, {
+    periodInMinutes: 3,
+  })
+
+  chrome.alarms.create(Alarms.DeleteOpenQueueFiles, {
+    delayInMinutes: 1,
+    periodInMinutes: 3,
+  })
+}
+
+async function loadDirectoryHandle() {
+  const {data: directoryHandle, error: directoryHandleError} =
+    await catchError(getDirectoryHandle())
+  if (directoryHandleError) {
+    store.getState().setDirectoryHandle(undefined)
+    throw new Error(`Error getting directory handle: ${directoryHandleError}`)
+  }
+  store.getState().setDirectoryHandle(directoryHandle)
 }
 
 function loadBackupSubDirectory() {
@@ -125,7 +162,6 @@ function loadBackupSubDirectory() {
       store.getState().setBackupSubdirectory(result.backupDirectory)
       backupOpenWindows()
     } else {
-      backgroundLog('Backup subdirectory not found')
       store.getState().setBackupSubdirectory(undefined)
     }
   })
@@ -205,7 +241,6 @@ async function searchForOpenQueueFiles() {
       }
     }
   }
-  setTimeout(searchForOpenQueueFiles, 3 * 60 * 1000)
 }
 
 async function deleteOpenQueueFiles() {
@@ -221,7 +256,6 @@ async function deleteOpenQueueFiles() {
     }
     store.getState().removeFileToDelete(fileName)
   }
-  setTimeout(deleteOpenQueueFiles, 3 * 60 * 1000)
 }
 
 async function handleOpenQueueFile(handle: FileSystemFileHandle) {
