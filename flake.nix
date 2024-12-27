@@ -20,12 +20,11 @@
             pname = "browser-interface";
             version = "1.2.5";
             src = ./.;
-            npmDepsHash = "sha256-kJvxigLUHh3Eoh1Ef7xD4d5hrgM7Oyu2DCaDDQQQkbA=";
+            npmDepsHash = "sha256-c8itZcSJCfgmArA8hTBBUCUWbc3j0JrqN1GwNRhPCTg=";
 
             buildPhase = ''
               ${builtins.readFile ./scripts/build.sh}
               npm run build:internal
-              ${builtins.readFile ./scripts/rename-helpers.sh}
             '';
 
             installPhase = ''

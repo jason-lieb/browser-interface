@@ -19,23 +19,21 @@ export function App() {
   const [requestPermissionModalOpen, setRequestPermissionModalOpen] = useState(false)
   const {navPage, setNavPage} = useNavPage()
 
-  const messageHandler = useCallback(
-    (message: string) => {
-      switch (message) {
-        case 'Request Permission':
-          if (directoryHandle) setRequestPermissionModalOpen(true)
-        case 'New Directory Handle':
-        case 'Changed Backup Directory':
-        case 'Manually Run Backup':
-          break
-        default:
-          console.log('Unexpected message: ', message)
-      }
-    },
-    [setRequestPermissionModalOpen, directoryHandle]
-  )
+  const messageHandler = (message: string) => {
+    switch (message) {
+      case 'Request Permission':
+        if (directoryHandle) setRequestPermissionModalOpen(true)
+      case 'New Directory Handle':
+      case 'Changed Backup Directory':
+      case 'Manually Run Backup':
+        break
+      default:
+        console.log('Unexpected message: ', message)
+    }
+  }
 
   useEffect(() => {
+    console.log('Message listener')
     chrome.runtime.onMessage.addListener(messageHandler)
     return () => chrome.runtime.onMessage.removeListener(messageHandler)
   }, [messageHandler])
