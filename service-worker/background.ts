@@ -1,3 +1,5 @@
+import {persist, createJSONStorage, StateStorage} from 'zustand/middleware'
+import {createStore} from 'zustand/vanilla'
 import {SHA256, enc} from 'crypto-js'
 import {catchError} from './utils/catch-error'
 import {createWindowWithTabs} from './utils/create-window'
@@ -6,6 +8,77 @@ import {TabT} from './utils/format-tabs'
 import {getDirectoryHandle} from './utils/indexed-db'
 import {backgroundLog} from './utils/log'
 import {saveAllWindows} from './utils/save-window'
+
+type Store = {
+  directoryHandle: FileSystemDirectoryHandle | undefined
+  setDirectoryHandle: (handle: FileSystemDirectoryHandle | undefined) => void
+
+  backupSubdirectory: string | undefined
+  setBackupSubdirectory: (path: string | undefined) => void
+
+  processedFiles: Set<string>
+  addProcessedFile: (file: string) => void
+  removeProcessedFile: (file: string) => void
+
+  filesToDelete: Set<string>
+  addFileToDelete: (file: string) => void
+  removeFileToDelete: (file: string) => void
+}
+
+export const store = createStore<Store, [['zustand/persist', unknown]]>(
+  persist(
+    set => ({
+      directoryHandle: undefined,
+      setDirectoryHandle: (handle: FileSystemDirectoryHandle | undefined) =>
+        set({directoryHandle: handle}),
+
+      backupSubdirectory: undefined,
+      setBackupSubdirectory: (path: string | undefined) => set({backupSubdirectory: path}),
+
+      processedFiles: new Set<string>(),
+      addProcessedFile: (file: string) =>
+        set(state => ({
+          processedFiles: new Set([...state.processedFiles, file]),
+        })),
+      removeProcessedFile: (file: string) =>
+        set(state => ({
+          processedFiles: new Set([...state.processedFiles].filter(f => f !== file)),
+        })),
+
+      filesToDelete: new Set<string>(),
+      addFileToDelete: (file: string) =>
+        set(state => ({
+          filesToDelete: new Set([...state.filesToDelete, file]),
+        })),
+      removeFileToDelete: (file: string) =>
+        set(state => ({
+          filesToDelete: new Set([...state.filesToDelete].filter(f => f !== file)),
+        })),
+    }),
+    {
+      name: 'service-worker-storage',
+      storage: createJSONStorage(() => storage),
+      partialize: state => ({
+        backupSubdirectory: state.backupSubdirectory,
+        processedFiles: state.processedFiles,
+        filesToDelete: state.filesToDelete,
+      }),
+    }
+  )
+)
+
+const storage: StateStorage = {
+  getItem: async (name: string): Promise<string | null> => {
+    const result = await chrome.storage.local.get(name)
+    return result[name] || null
+  },
+  setItem: async (name: string, value: string): Promise<void> => {
+    await chrome.storage.local.set({[name]: value})
+  },
+  removeItem: async (name: string): Promise<void> => {
+    await chrome.storage.local.remove(name)
+  },
+}
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
 
@@ -26,19 +99,20 @@ chrome.runtime.onMessage.addListener(message => {
   }
 })
 
-let directoryHandle: FileSystemDirectoryHandle | undefined
-let backupSubdirectory: string | undefined
-const processedFiles = new Set<string>()
-const filesToDelete = new Set<string>()
-
 const DEFAULT_BACKUP_FREQUENCY = 5 * 60 * 1000
 
 init()
 setInterval(backupOpenWindows, DEFAULT_BACKUP_FREQUENCY)
 
 async function init() {
-  directoryHandle = await getDirectoryHandle()
+  const {data: directoryHandle, error: directoryHandleError} =
+    await catchError(getDirectoryHandle())
+  if (directoryHandleError)
+    throw new Error(`Error getting directory handle: ${directoryHandleError}`)
+
+  store.getState().setDirectoryHandle(directoryHandle)
   if (directoryHandle === undefined) return
+
   loadBackupSubDirectory()
   searchForOpenQueueFiles()
   deleteOpenQueueFiles()
@@ -48,16 +122,18 @@ function loadBackupSubDirectory() {
   chrome.storage.local.get(['backupDirectory'], result => {
     if (result.backupDirectory) {
       backgroundLog('Backup subdirectory found:', result.backupDirectory)
-      backupSubdirectory = result.backupDirectory
+      store.getState().setBackupSubdirectory(result.backupDirectory)
       backupOpenWindows()
     } else {
       backgroundLog('Backup subdirectory not found')
-      backupSubdirectory = undefined
+      store.getState().setBackupSubdirectory(undefined)
     }
   })
 }
 
 async function backupOpenWindows() {
+  const {directoryHandle, backupSubdirectory} = store.getState()
+
   if (directoryHandle === undefined) {
     backgroundLog('Cannot backup windows: directory handle is undefined')
     return
@@ -109,6 +185,7 @@ async function checkForTabsToBackup() {
 }
 
 async function searchForOpenQueueFiles() {
+  const {directoryHandle} = store.getState()
   if (directoryHandle === undefined) return
   const fileNamePattern = new RegExp('browser-interface-open-queue-\\d+\\.json')
   backgroundLog('Searching for open queue files')
@@ -132,6 +209,7 @@ async function searchForOpenQueueFiles() {
 }
 
 async function deleteOpenQueueFiles() {
+  const {directoryHandle, filesToDelete} = store.getState()
   if (directoryHandle === undefined) return
   backgroundLog('Deleting open queue files: ', filesToDelete)
 
@@ -141,12 +219,13 @@ async function deleteOpenQueueFiles() {
       chrome.runtime.sendMessage('Request Permission')
       continue
     }
-    filesToDelete.delete(fileName)
+    store.getState().removeFileToDelete(fileName)
   }
   setTimeout(deleteOpenQueueFiles, 3 * 60 * 1000)
 }
 
 async function handleOpenQueueFile(handle: FileSystemFileHandle) {
+  const {directoryHandle, processedFiles} = store.getState()
   const {data: file, error: fileError} = await catchError(handle.getFile())
   if (fileError) throw new Error(`Error getting file: ${fileError}`)
 
@@ -156,7 +235,6 @@ async function handleOpenQueueFile(handle: FileSystemFileHandle) {
   const hash = SHA256(contents).toString(enc.Hex)
 
   if (processedFiles.has(hash)) {
-    backgroundLog('Contents:', contents)
     if (directoryHandle === undefined) {
       backgroundLog('Directory handle is undefined: already processed')
       return
@@ -178,11 +256,12 @@ async function handleOpenQueueFile(handle: FileSystemFileHandle) {
 }
 
 async function deleteOpenQueueFile(direcotoryHandle: FileSystemDirectoryHandle, fileName: string) {
-  filesToDelete.add(fileName)
+  const {addFileToDelete, removeFileToDelete} = store.getState()
+  addFileToDelete(fileName)
   const {error} = await catchError(direcotoryHandle.removeEntry(fileName))
   if (error) {
     chrome.runtime.sendMessage('Request Permission')
     return
   }
-  filesToDelete.delete(fileName)
+  removeFileToDelete(fileName)
 }
