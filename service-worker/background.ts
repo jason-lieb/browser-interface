@@ -1,5 +1,5 @@
-import {createStore} from 'zustand/vanilla'
 import {SHA256, enc} from 'crypto-js'
+import {store} from './src/store'
 import {createWindowWithTabs} from './utils/create-window'
 import {catchError} from './utils/error'
 import {getSubDirectoryHandle} from './utils/file-helpers'
@@ -7,51 +7,6 @@ import {TabT} from './utils/format-tabs'
 import {getDirectoryHandle} from './utils/indexed-db'
 import {backgroundLog} from './utils/log'
 import {saveAllWindows} from './utils/save-window'
-
-type Store = {
-  directoryHandle: FileSystemDirectoryHandle | undefined
-  setDirectoryHandle: (handle: FileSystemDirectoryHandle | undefined) => void
-
-  backupSubdirectory: string | undefined
-  setBackupSubdirectory: (path: string | undefined) => void
-
-  processedFiles: Set<string>
-  addProcessedFile: (file: string) => void
-  removeProcessedFile: (file: string) => void
-
-  filesToDelete: Set<string>
-  addFileToDelete: (file: string) => void
-  removeFileToDelete: (file: string) => void
-}
-
-export const store = createStore<Store>(set => ({
-  directoryHandle: undefined,
-  setDirectoryHandle: (handle: FileSystemDirectoryHandle | undefined) =>
-    set({directoryHandle: handle}),
-
-  backupSubdirectory: undefined,
-  setBackupSubdirectory: (path: string | undefined) => set({backupSubdirectory: path}),
-
-  processedFiles: new Set<string>(),
-  addProcessedFile: (file: string) =>
-    set(state => ({
-      processedFiles: new Set([...state.processedFiles, file]),
-    })),
-  removeProcessedFile: (file: string) =>
-    set(state => ({
-      processedFiles: new Set([...state.processedFiles].filter(f => f !== file)),
-    })),
-
-  filesToDelete: new Set<string>(),
-  addFileToDelete: (file: string) =>
-    set(state => ({
-      filesToDelete: new Set([...state.filesToDelete, file]),
-    })),
-  removeFileToDelete: (file: string) =>
-    set(state => ({
-      filesToDelete: new Set([...state.filesToDelete].filter(f => f !== file)),
-    })),
-}))
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
 
@@ -109,6 +64,7 @@ async function init() {
   })
 
   chrome.alarms.create(Alarms.SearchForOpenQueueFiles, {
+    delayInMinutes: 0,
     periodInMinutes: 3,
   })
 
