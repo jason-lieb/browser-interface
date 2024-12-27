@@ -1,4 +1,3 @@
-import {persist, createJSONStorage, StateStorage} from 'zustand/middleware'
 import {createStore} from 'zustand/vanilla'
 import {SHA256, enc} from 'crypto-js'
 import {createWindowWithTabs} from './utils/create-window'
@@ -25,60 +24,34 @@ type Store = {
   removeFileToDelete: (file: string) => void
 }
 
-export const store = createStore<Store, [['zustand/persist', unknown]]>(
-  persist(
-    set => ({
-      directoryHandle: undefined,
-      setDirectoryHandle: (handle: FileSystemDirectoryHandle | undefined) =>
-        set({directoryHandle: handle}),
+export const store = createStore<Store>(set => ({
+  directoryHandle: undefined,
+  setDirectoryHandle: (handle: FileSystemDirectoryHandle | undefined) =>
+    set({directoryHandle: handle}),
 
-      backupSubdirectory: undefined,
-      setBackupSubdirectory: (path: string | undefined) => set({backupSubdirectory: path}),
+  backupSubdirectory: undefined,
+  setBackupSubdirectory: (path: string | undefined) => set({backupSubdirectory: path}),
 
-      processedFiles: new Set<string>(),
-      addProcessedFile: (file: string) =>
-        set(state => ({
-          processedFiles: new Set([...state.processedFiles, file]),
-        })),
-      removeProcessedFile: (file: string) =>
-        set(state => ({
-          processedFiles: new Set([...state.processedFiles].filter(f => f !== file)),
-        })),
+  processedFiles: new Set<string>(),
+  addProcessedFile: (file: string) =>
+    set(state => ({
+      processedFiles: new Set([...state.processedFiles, file]),
+    })),
+  removeProcessedFile: (file: string) =>
+    set(state => ({
+      processedFiles: new Set([...state.processedFiles].filter(f => f !== file)),
+    })),
 
-      filesToDelete: new Set<string>(),
-      addFileToDelete: (file: string) =>
-        set(state => ({
-          filesToDelete: new Set([...state.filesToDelete, file]),
-        })),
-      removeFileToDelete: (file: string) =>
-        set(state => ({
-          filesToDelete: new Set([...state.filesToDelete].filter(f => f !== file)),
-        })),
-    }),
-    {
-      name: 'service-worker-storage',
-      storage: createJSONStorage(() => storage),
-      partialize: state => ({
-        backupSubdirectory: state.backupSubdirectory,
-        processedFiles: state.processedFiles,
-        filesToDelete: state.filesToDelete,
-      }),
-    }
-  )
-)
-
-const storage: StateStorage = {
-  getItem: async (name: string): Promise<string | null> => {
-    const result = await chrome.storage.local.get(name)
-    return result[name] || null
-  },
-  setItem: async (name: string, value: string): Promise<void> => {
-    await chrome.storage.local.set({[name]: value})
-  },
-  removeItem: async (name: string): Promise<void> => {
-    await chrome.storage.local.remove(name)
-  },
-}
+  filesToDelete: new Set<string>(),
+  addFileToDelete: (file: string) =>
+    set(state => ({
+      filesToDelete: new Set([...state.filesToDelete, file]),
+    })),
+  removeFileToDelete: (file: string) =>
+    set(state => ({
+      filesToDelete: new Set([...state.filesToDelete].filter(f => f !== file)),
+    })),
+}))
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage())
 
