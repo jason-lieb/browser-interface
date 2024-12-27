@@ -18,7 +18,7 @@
         packages = {
           default = pkgs.buildNpmPackage {
             pname = "browser-interface";
-            version = "1.2.6";
+            version = "1.2.7";
             src = ./.;
             npmDepsHash = "sha256-eoZ9HXHgAUsbjeq/42NHNjHXLjMQse5z2murOzBJvcI=";
 
