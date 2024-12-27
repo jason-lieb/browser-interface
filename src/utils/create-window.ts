@@ -4,14 +4,14 @@ import {TabT} from './format-tabs'
 export async function createWindowWithTabs(tabs: TabT[]) {
   if (tabs.length === 0) return
 
-  const {data: window, error} = await catchError(chrome.windows.create({focused: true}))
+  const {data: newWindow, error} = await catchError(chrome.windows.create({focused: true}))
   if (error) throw new Error(`createWindowWithTabsError: ${error}`)
 
   await Promise.all(
     tabs.map((tab, index) =>
       chrome.tabs
         .create({
-          windowId: window.id,
+          windowId: newWindow.id,
           url: tab.url,
           active: index === 0,
         })
@@ -19,10 +19,15 @@ export async function createWindowWithTabs(tabs: TabT[]) {
     )
   )
 
-  if (window.tabs === undefined || window.tabs[0]!.id === undefined)
-    throw new Error(
-      'createWindowWithTabsError: window.tabs is undefined or window.tabs[0].id is undefined'
-    )
+  if (newWindow.id === undefined)
+    throw new Error('createWindowWithTabsError: window.id is undefined')
 
-  chrome.tabs.remove(window.tabs[0]!.id).catch(throwError('Error removing tab'))
+  const {data: window, error: windowError} = await catchError(
+    chrome.windows.get(newWindow.id, {populate: true})
+  )
+  if (windowError) throw new Error(`createWindowWithTabsError: ${windowError}`)
+
+  const newTab = window?.tabs?.find(tab => tab.pendingUrl === 'chrome://newtab/')?.id
+  if (newTab === undefined) return
+  chrome.tabs.remove(newTab).catch(throwError('Error removing tab'))
 }
