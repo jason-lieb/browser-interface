@@ -9,6 +9,7 @@ import {catchError} from './utils/error'
 import {getDirectoryHandle} from './utils/indexed-db'
 import {pinTab} from './utils/pin-tab'
 import {saveWindow} from './utils/save-window'
+import {storeBackupDirectory} from './utils/store-backup-directory'
 
 export function App() {
   const {directoryHandle, setDirectoryHandle} = useDirectoryHandle()
@@ -40,9 +41,24 @@ export function App() {
   }, [messageHandler])
 
   useEffect(() => {
-    loadDirectoryHandle()
-    loadBackupDirectory()
+    async function load() {
+      const directoryHandle = await getDirectoryHandle()
+      setDirectoryHandle(directoryHandle)
 
+      const result = await chrome.storage.local.get(['backupDirectory'])
+      if (result.backupDirectory) {
+        console.log('Backup directory found:', result.backupDirectory)
+        setBackupDirectory(result.backupDirectory)
+      } else {
+        setBackupDirectory('')
+      }
+    }
+
+    load()
+  }, [])
+
+  // Reset to save page after 1 minute of inactivity
+  useEffect(() => {
     let resetNavPageTimeout: NodeJS.Timeout
 
     function handleVisibilityChange() {
@@ -61,7 +77,7 @@ export function App() {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       clearTimeout(resetNavPageTimeout)
     }
-  }, [])
+  }, [setNavPage])
 
   useEffect(
     () =>
@@ -69,31 +85,8 @@ export function App() {
         if (result.pinSetting !== undefined) setPinSetting(result.pinSetting)
         if (result.pinSetting) pinTab()
       }),
-    []
+    [setPinSetting]
   )
-
-  async function loadDirectoryHandle() {
-    const directoryHandle = await getDirectoryHandle()
-    setDirectoryHandle(directoryHandle)
-  }
-
-  function loadBackupDirectory() {
-    chrome.storage.local.get(['backupDirectory'], result => {
-      if (result.backupDirectory) {
-        console.log('Backup directory found:', result.backupDirectory)
-        setBackupDirectory(result.backupDirectory)
-      } else {
-        console.log('Backup directory not found')
-      }
-    })
-  }
-
-  function storeBackupDirectory(backupDirectory: string) {
-    chrome.storage.local.set({backupDirectory}, () => {
-      console.log('Backup directory saved:', backupDirectory)
-      chrome.runtime.sendMessage('Changed Backup Directory')
-    })
-  }
 
   function clearBackupDirectory() {
     setBackupDirectory('')
@@ -146,7 +139,6 @@ export function App() {
             <SettingsPage
               backupDirectory={backupDirectory}
               setBackupDirectory={setBackupDirectory}
-              storeBackupDirectory={storeBackupDirectory}
               clearBackupDirectory={clearBackupDirectory}
               pinSetting={pinSetting}
               setPinSetting={setPinSetting}

@@ -1,18 +1,13 @@
 import {Dispatch, FormEvent, SetStateAction, useState} from 'react'
+import {storeBackupDirectory} from '../utils/store-backup-directory'
 
 type Props = {
   backupDirectory: string
   setBackupDirectory: Dispatch<SetStateAction<string>>
-  storeBackupDirectory: (backupDirectory: string) => void
   clearBackupDirectory: () => void
 }
 
-export function Backup({
-  backupDirectory,
-  setBackupDirectory,
-  storeBackupDirectory,
-  clearBackupDirectory,
-}: Props) {
+export function Backup({backupDirectory, setBackupDirectory, clearBackupDirectory}: Props) {
   const [backupInputText, setBackupInputText] = useState('')
   const [isSettingUpBackup, setIsSettingUpBackup] = useState(false)
 

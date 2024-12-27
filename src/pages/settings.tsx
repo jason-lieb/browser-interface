@@ -7,7 +7,6 @@ import {pinTab, unpinTab} from '../utils/pin-tab'
 type SettingProps = {
   backupDirectory: string
   setBackupDirectory: Dispatch<SetStateAction<string>>
-  storeBackupDirectory: (backupDirectory: string) => void
   clearBackupDirectory: () => void
   pinSetting: boolean
   setPinSetting: (pinSetting: boolean) => void
@@ -16,7 +15,6 @@ type SettingProps = {
 export function SettingsPage({
   backupDirectory,
   setBackupDirectory,
-  storeBackupDirectory,
   clearBackupDirectory,
   pinSetting,
   setPinSetting,
@@ -53,7 +51,6 @@ export function SettingsPage({
       <Backup
         backupDirectory={backupDirectory}
         setBackupDirectory={setBackupDirectory}
-        storeBackupDirectory={storeBackupDirectory}
         clearBackupDirectory={clearBackupDirectory}
       />
       <hr />
