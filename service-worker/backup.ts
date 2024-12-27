@@ -1,8 +1,8 @@
-import {catchError} from '../utils/error'
-import {getSubDirectoryHandle} from '../utils/file-helpers'
-import {backgroundLog} from '../utils/log'
-import {saveAllWindows} from '../utils/save-window'
 import {store} from './store'
+import {catchError} from './utils/error'
+import {getSubDirectoryHandle} from './utils/file-helpers'
+import {backgroundLog} from './utils/log'
+import {saveAllWindows} from './utils/save-window'
 
 export async function backupOpenWindows() {
   const {directoryHandle, backupSubdirectory} = store.getState()

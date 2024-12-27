@@ -1,10 +1,10 @@
 import {SHA256, enc} from 'crypto-js'
-import {createWindowWithTabs} from '../utils/create-window'
-import {catchError} from '../utils/error'
-import {TabT} from '../utils/format-tabs'
-import {backgroundLog} from '../utils/log'
 import {deleteOpenQueueFile} from './delete'
 import {store} from './store'
+import {createWindowWithTabs} from './utils/create-window'
+import {catchError} from './utils/error'
+import {TabT} from './utils/format-tabs'
+import {backgroundLog} from './utils/log'
 
 export async function searchForOpenQueueFiles() {
   const {directoryHandle} = store.getState()

@@ -1,6 +1,6 @@
-import {catchError} from '../utils/error'
-import {backgroundLog} from '../utils/log'
 import {store} from './store'
+import {catchError} from './utils/error'
+import {backgroundLog} from './utils/log'
 
 export async function deleteOpenQueueFiles() {
   const {directoryHandle, filesToDelete} = store.getState()
