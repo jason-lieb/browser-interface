@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build:internal": "tsc && vite build",
-    "build": "./scripts/build.sh && npm run build:internal",
+    "build": "./scripts/build.sh && npm run build:internal && ./scripts/rename-helpers.sh",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -25,6 +25,7 @@
             buildPhase = ''
               ${builtins.readFile ./scripts/build.sh}
               npm run build:internal
+              ${builtins.readFile ./scripts/rename-helpers.sh}
             '';
 
             installPhase = ''
