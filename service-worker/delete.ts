@@ -22,12 +22,11 @@ export async function deleteOpenQueueFiles() {
 }
 
 export async function deleteOpenQueueFile(
-  direcotoryHandle: FileSystemDirectoryHandle,
+  directoryHandle: FileSystemDirectoryHandle,
   fileName: string
 ) {
-  const {addFileToDelete, removeFileToDelete} = store.getState()
-  addFileToDelete(fileName)
-  const {error} = await catchError(direcotoryHandle.removeEntry(fileName))
+  const {removeFileToDelete} = store.getState()
+  const {error} = await catchError(directoryHandle.removeEntry(fileName))
   if (error) {
     chrome.runtime.sendMessage('Request Permission')
     return

@@ -7,10 +7,6 @@ type Store = {
   backupSubdirectory: string | undefined
   setBackupSubdirectory: (path: string | undefined) => void
 
-  processedFiles: Set<string>
-  addProcessedFile: (file: string) => void
-  removeProcessedFile: (file: string) => void
-
   filesToDelete: Set<string>
   addFileToDelete: (file: string) => void
   removeFileToDelete: (file: string) => void
@@ -23,16 +19,6 @@ export const store = createStore<Store>(set => ({
 
   backupSubdirectory: undefined,
   setBackupSubdirectory: (path: string | undefined) => set({backupSubdirectory: path}),
-
-  processedFiles: new Set<string>(),
-  addProcessedFile: (file: string) =>
-    set(state => ({
-      processedFiles: new Set([...state.processedFiles, file]),
-    })),
-  removeProcessedFile: (file: string) =>
-    set(state => ({
-      processedFiles: new Set([...state.processedFiles].filter(f => f !== file)),
-    })),
 
   filesToDelete: new Set<string>(),
   addFileToDelete: (file: string) =>

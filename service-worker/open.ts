@@ -1,4 +1,3 @@
-import {SHA256, enc} from 'crypto-js'
 import {deleteOpenQueueFile} from './delete'
 import {store} from './store'
 import {createWindowWithTabs} from './utils/create-window'
@@ -34,7 +33,7 @@ export async function searchForOpenQueueFiles() {
 }
 
 async function handleOpenQueueFile(handle: FileSystemFileHandle) {
-  const {directoryHandle, processedFiles} = store.getState()
+  const {directoryHandle, filesToDelete, addFileToDelete} = store.getState()
   if (directoryHandle === undefined) throw new Error('Impossible')
 
   const {data: file, error: fileError} = await catchError(handle.getFile())
@@ -43,19 +42,16 @@ async function handleOpenQueueFile(handle: FileSystemFileHandle) {
   const {data: contents, error: contentsError} = await catchError(file.text())
   if (contentsError) throw new Error(`Error getting file contents: ${contentsError}`)
 
-  const hash = SHA256(contents).toString(enc.Hex)
-
-  if (processedFiles.has(hash)) {
+  if (filesToDelete.has(handle.name)) {
     deleteOpenQueueFile(directoryHandle, handle.name)
     return
   }
 
   const tabs: TabT[] = JSON.parse(contents)
 
-  store.getState().addProcessedFile(hash)
-
   const {error} = await catchError(createWindowWithTabs(tabs))
   if (error) console.error('Error creating window with tabs: ', error)
 
+  addFileToDelete(handle.name)
   deleteOpenQueueFile(directoryHandle, handle.name)
 }

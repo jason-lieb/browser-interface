@@ -10,14 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "crypto-js": "^4.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.262",
-    "@types/crypto-js": "^4.2.2",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
     "@types/wicg-file-system-access": "^2023.10.4",
