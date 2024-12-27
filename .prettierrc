@@ -15,5 +15,5 @@
   "htmlWhitespaceSensitivity": "css",
   "endOfLine": "auto",
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
-  "importOrder": ["^react$", "react-dom", "<THIRD_PARTY_MODULES>", "[./]"]
+  "importOrder": ["^react$", "react-dom", "zustand", "<THIRD_PARTY_MODULES>", "[./]"]
 }
