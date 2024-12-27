@@ -1,4 +1,4 @@
-import {FormEvent, useCallback, useEffect, useState} from 'react'
+import {FormEvent, useEffect, useState} from 'react'
 import {NavBar} from './components/navbar'
 import {BrowsePage} from './pages/browse'
 import {SavePage} from './pages/save'
@@ -19,24 +19,24 @@ export function App() {
   const [requestPermissionModalOpen, setRequestPermissionModalOpen] = useState(false)
   const {navPage, setNavPage} = useNavPage()
 
-  const messageHandler = (message: string) => {
-    switch (message) {
-      case 'Request Permission':
-        if (directoryHandle) setRequestPermissionModalOpen(true)
-      case 'New Directory Handle':
-      case 'Changed Backup Directory':
-      case 'Manually Run Backup':
-        break
-      default:
-        console.log('Unexpected message: ', message)
-    }
-  }
-
   useEffect(() => {
     console.log('Message listener')
+    const messageHandler = (message: string) => {
+      switch (message) {
+        case 'Request Permission':
+          if (directoryHandle) setRequestPermissionModalOpen(true)
+          break
+        case 'New Directory Handle':
+        case 'Changed Backup Directory':
+        case 'Manually Run Backup':
+          break
+        default:
+          console.log('Unexpected message: ', message)
+      }
+    }
     chrome.runtime.onMessage.addListener(messageHandler)
     return () => chrome.runtime.onMessage.removeListener(messageHandler)
-  }, [messageHandler])
+  }, [directoryHandle])
 
   useEffect(() => {
     async function load() {
@@ -53,7 +53,7 @@ export function App() {
     }
 
     load()
-  }, [])
+  }, [setDirectoryHandle])
 
   // Reset to save page after 1 minute of inactivity
   useEffect(() => {

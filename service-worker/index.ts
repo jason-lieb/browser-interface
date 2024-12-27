@@ -34,6 +34,7 @@ chrome.runtime.onMessage.addListener(message => {
       break
     case 'Manually Run Backup':
       backupOpenWindows()
+      break
     case 'Request Permission':
       break
     default:

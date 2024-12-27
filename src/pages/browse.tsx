@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useCallback, useEffect, useState} from 'react'
 import {NavBar} from '../components/navbar'
 import {ToggleIcon} from '../components/toggle-icon'
 import {useDirectoryHandle} from '../store'
@@ -22,7 +22,7 @@ export function BrowsePage({backupDirectory}: Props) {
   const [directories, setDirectories] = useState<[string, FileSystemDirectoryHandle][]>([])
   const [files, setFiles] = useState<[string, FileSystemFileHandle][]>([])
 
-  function loadDirectoryEntries() {
+  const loadDirectoryEntries = useCallback(() => {
     getDirectoryEntries(directoryHandle!, currentDirectory)
       .then(result => {
         const [directories, files] = result
@@ -33,11 +33,11 @@ export function BrowsePage({backupDirectory}: Props) {
         console.error('getDirectoryEntriesError: ', error)
         clearDirectory(setDirectoryHandle)
       })
-  }
+  }, [directoryHandle, setDirectoryHandle, currentDirectory])
 
   useEffect(() => {
     loadDirectoryEntries()
-  }, [directoryHandle, currentDirectory])
+  }, [loadDirectoryEntries])
 
   const jumpDirectory = (
     jumpTo: string,
