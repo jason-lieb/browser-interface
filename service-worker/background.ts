@@ -56,11 +56,6 @@ async function init() {
 
   loadBackupSubDirectory()
 
-  chrome.alarms.create(Alarms.BackupOpenWindows, {
-    delayInMinutes: 1,
-    periodInMinutes: 5,
-  })
-
   chrome.alarms.create(Alarms.SearchForOpenQueueFiles, {
     delayInMinutes: 0,
     periodInMinutes: 3,
@@ -82,14 +77,26 @@ async function loadDirectoryHandle() {
   store.getState().setDirectoryHandle(directoryHandle)
 }
 
-function loadBackupSubDirectory() {
-  chrome.storage.local.get(['backupDirectory'], result => {
-    if (result.backupDirectory) {
-      backgroundLog('Backup subdirectory found:', result.backupDirectory)
-      store.getState().setBackupSubdirectory(result.backupDirectory)
-      backupOpenWindows()
-    } else {
-      store.getState().setBackupSubdirectory(undefined)
-    }
-  })
+async function loadBackupSubDirectory() {
+  await chrome.alarms.clear(Alarms.BackupOpenWindows)
+  const {data: result, error: backupDirectoryError} = await catchError(
+    chrome.storage.local.get('backupDirectory')
+  )
+
+  if (backupDirectoryError) {
+    backgroundLog('Error getting backup directory:', backupDirectoryError)
+    return
+  }
+
+  if (result.backupDirectory && result.backupDirectory !== '') {
+    backgroundLog('Backup subdirectory found:', result.backupDirectory)
+    store.getState().setBackupSubdirectory(result.backupDirectory)
+
+    chrome.alarms.create(Alarms.BackupOpenWindows, {
+      delayInMinutes: 0,
+      periodInMinutes: 5,
+    })
+  } else {
+    store.getState().setBackupSubdirectory(undefined)
+  }
 }

@@ -8,7 +8,11 @@ import {store} from './store'
 
 export async function searchForOpenQueueFiles() {
   const {directoryHandle} = store.getState()
-  if (directoryHandle === undefined) return
+  if (directoryHandle === undefined) {
+    chrome.alarms.clearAll()
+    return
+  }
+
   const fileNamePattern = new RegExp('browser-interface-open-queue-\\d+\\.json')
   backgroundLog('Searching for open queue files')
   for await (const entry of directoryHandle.keys()) {
@@ -31,6 +35,8 @@ export async function searchForOpenQueueFiles() {
 
 async function handleOpenQueueFile(handle: FileSystemFileHandle) {
   const {directoryHandle, processedFiles} = store.getState()
+  if (directoryHandle === undefined) throw new Error('Impossible')
+
   const {data: file, error: fileError} = await catchError(handle.getFile())
   if (fileError) throw new Error(`Error getting file: ${fileError}`)
 
@@ -40,22 +46,16 @@ async function handleOpenQueueFile(handle: FileSystemFileHandle) {
   const hash = SHA256(contents).toString(enc.Hex)
 
   if (processedFiles.has(hash)) {
-    if (directoryHandle === undefined) {
-      backgroundLog('Directory handle is undefined: already processed')
-      return
-    }
     deleteOpenQueueFile(directoryHandle, handle.name)
     return
   }
 
   const tabs: TabT[] = JSON.parse(contents)
 
-  processedFiles.add(hash)
+  store.getState().addProcessedFile(hash)
+
   const {error} = await catchError(createWindowWithTabs(tabs))
   if (error) console.error('Error creating window with tabs: ', error)
-  if (directoryHandle === undefined) {
-    backgroundLog('Directory handle is undefined: after creating window')
-    return
-  }
+
   deleteOpenQueueFile(directoryHandle, handle.name)
 }
