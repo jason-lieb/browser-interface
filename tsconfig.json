@@ -7,6 +7,8 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
     "allowJs": true,
     "checkJs": false,
     "outDir": "dist",

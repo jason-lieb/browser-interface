@@ -66,9 +66,9 @@ export function markdownToJson(markdown: string | ArrayBuffer | null): TabT[] {
       .map(col => col.trim())
       .slice(1, -1)
     const tab: TabT = {
-      favIconUrl: extractFavIconUrl(columns[0]),
-      title: extractTitle(columns[1]),
-      url: extractUrl(columns[1]),
+      favIconUrl: extractFavIconUrl(columns[0]!),
+      title: extractTitle(columns[1]!),
+      url: extractUrl(columns[1]!),
     }
     tabs.push(tab)
   }
@@ -78,15 +78,15 @@ export function markdownToJson(markdown: string | ArrayBuffer | null): TabT[] {
 
 function extractFavIconUrl(column: string): string {
   const match = column.match(/!\[favicon\]\((.*?)\)/)
-  return match ? match[1] : ''
+  return match ? match[1]! : ''
 }
 
 function extractTitle(column: string): string {
   const match = column.match(/\[(.*?)\]/)
-  return match ? match[1] : ''
+  return match ? match[1]! : ''
 }
 
 function extractUrl(column: string): string {
   const match = column.match(/\((.*?)\)/)
-  return match ? match[1] : ''
+  return match ? match[1]! : ''
 }

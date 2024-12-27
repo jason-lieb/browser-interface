@@ -19,10 +19,10 @@ export async function createWindowWithTabs(tabs: TabT[]) {
     )
   )
 
-  if (window.tabs === undefined || window.tabs[0].id === undefined)
+  if (window.tabs === undefined || window.tabs[0]!.id === undefined)
     throw new Error(
       'createWindowWithTabsError: window.tabs is undefined or window.tabs[0].id is undefined'
     )
 
-  chrome.tabs.remove(window.tabs[0].id).catch(throwError('Error removing tab'))
+  chrome.tabs.remove(window.tabs[0]!.id).catch(throwError('Error removing tab'))
 }

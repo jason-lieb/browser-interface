@@ -20,7 +20,7 @@ function NavButton({page}: {page: NavPage}) {
       style={{margin: '1rem'}}
       onClick={() => setNavPage(page)}
     >
-      {page.split('')[0].toUpperCase() + page.slice(1)}
+      {page.split('')[0]!.toUpperCase() + page.slice(1)}
     </button>
   )
 }

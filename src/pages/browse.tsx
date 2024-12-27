@@ -18,7 +18,7 @@ export function BrowsePage({backupDirectory}: Props) {
   const [currentDirectoryHandles, setCurrentDirectoryHandles] = useState<
     FileSystemDirectoryHandle[]
   >([directoryHandle!])
-  const currentDirectoryHandle = currentDirectoryHandles[currentDirectoryHandles.length - 1]
+  const currentDirectoryHandle = currentDirectoryHandles[currentDirectoryHandles.length - 1]!
   const [directories, setDirectories] = useState<[string, FileSystemDirectoryHandle][]>([])
   const [files, setFiles] = useState<[string, FileSystemFileHandle][]>([])
 

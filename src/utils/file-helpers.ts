@@ -47,7 +47,7 @@ export async function getSubDirectoryHandle(
 
   for (const directoryName of directoryNames) {
     const {data: directoryHandle, error} = await catchError(
-      directoryHandles[directoryHandles.length - 1].getDirectoryHandle(directoryName, {
+      directoryHandles[directoryHandles.length - 1]!.getDirectoryHandle(directoryName, {
         create: true,
       })
     )
