@@ -14,7 +14,7 @@ export async function deleteOpenQueueFiles() {
   for (const fileName of filesToDelete) {
     const {error} = await catchError(directoryHandle.removeEntry(fileName))
     if (error) {
-      chrome.runtime.sendMessage('Request Permission')
+      requestPermission()
       return
     }
     store.getState().removeFileToDelete(fileName)
@@ -28,8 +28,24 @@ export async function deleteOpenQueueFile(
   const {removeFileToDelete} = store.getState()
   const {error} = await catchError(directoryHandle.removeEntry(fileName))
   if (error) {
-    chrome.runtime.sendMessage('Request Permission')
+    requestPermission()
     return
   }
   removeFileToDelete(fileName)
+}
+
+async function requestPermission() {
+  chrome.runtime.sendMessage('Request Permission')
+
+  const extensionUrl = chrome.runtime.getURL('browser-interface.html')
+  const tabs = await chrome.tabs.query({
+    url: extensionUrl,
+    currentWindow: true,
+  })
+
+  if (tabs.length > 0) {
+    await chrome.tabs.update(tabs[0].id!, {active: true})
+  } else {
+    await chrome.tabs.create({url: extensionUrl})
+  }
 }
