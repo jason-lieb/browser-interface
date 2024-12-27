@@ -20,7 +20,6 @@ export function App() {
   const {navPage, setNavPage} = useNavPage()
 
   useEffect(() => {
-    console.log('Message listener')
     const messageHandler = (message: string) => {
       switch (message) {
         case 'Request Permission':
