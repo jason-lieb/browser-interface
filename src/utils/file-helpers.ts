@@ -38,6 +38,17 @@ export async function loadFile(fileHandle: FileSystemFileHandle) {
   return markdownToJson(reader.result)
 }
 
+export async function loadFileText(fileHandle: FileSystemFileHandle) {
+  const file = await fileHandle.getFile()
+
+  const reader = new FileReader()
+  reader.readAsText(file)
+  await new Promise(resolve => (reader.onloadend = resolve))
+
+  if (reader.result === null) return []
+  return reader.result as string
+}
+
 export async function getSubDirectoryHandle(
   existingDirectoryHandle: FileSystemDirectoryHandle,
   directoryNames: string[]

@@ -5,7 +5,7 @@ import {useDirectoryHandle} from '../store'
 import {createWindowWithTabs} from '../utils/create-window'
 import {clearDirectory} from '../utils/directory'
 import {catchError, labelError, throwError} from '../utils/error'
-import {getDirectoryEntries, loadFile} from '../utils/file-helpers'
+import {getDirectoryEntries, loadFile, loadFileText} from '../utils/file-helpers'
 import {TabT} from '../utils/format-tabs'
 
 type Props = {
@@ -100,15 +100,22 @@ export function BrowsePage({backupDirectory}: Props) {
             key={d[0]}
           />
         ))}
-        {files.map(f => (
-          <File
-            currentDirectoryHandle={currentDirectoryHandle}
-            loadDirectoryEntries={loadDirectoryEntries}
-            handle={f[1]}
-            name={f[0]}
-            key={f[0]}
-          />
-        ))}
+        {files
+          .filter(f => f[0] === 'Last Backup Timestamp.md')
+          .map(f => (
+            <LastBackupTimestamp handle={f[1]} key={f[0]} />
+          ))}
+        {files
+          .filter(f => f[0] !== 'Last Backup Timestamp.md')
+          .map(f => (
+            <File
+              currentDirectoryHandle={currentDirectoryHandle}
+              loadDirectoryEntries={loadDirectoryEntries}
+              handle={f[1]}
+              name={f[0]}
+              key={f[0]}
+            />
+          ))}
       </div>
     </div>
   )
@@ -165,6 +172,21 @@ function Directory({
           <LinkButton text={name} onClick={enterDirectory} />
         </h4>
       </div>
+    </div>
+  )
+}
+
+function LastBackupTimestamp({handle}: {handle: FileSystemFileHandle}) {
+  const [timestamp, setTimestamp] = useState<string | null>(null)
+  useEffect(() => {
+    loadFileText(handle)
+      .then(ts => (typeof ts === 'string' ? setTimestamp(ts) : setTimestamp(null)))
+      .catch(labelError('loadFileError'))
+  }, [handle])
+  return (
+    <div className={'window hover-container'}>
+      <div />
+      <h4 className={'file-link'}>Last Backup Timestamp: {timestamp}</h4>
     </div>
   )
 }

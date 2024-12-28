@@ -62,7 +62,7 @@ async function createLastBackupTimestamp(subdirectoryHandle: FileSystemDirectory
     .replace(/(\d+)\/(\d+)\/(\d+),\s/, '$3-$1-$2 ')
 
   const {data: fileHandle, error: fileHandleError} = await catchError(
-    subdirectoryHandle.getFileHandle('lastBackupTimestamp.txt', {
+    subdirectoryHandle.getFileHandle('Last Backup Timestamp.md', {
       create: true,
     })
   )
