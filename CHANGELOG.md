@@ -1,5 +1,8 @@
 # CHANGELOGS
 
+## 1.2.8
+- Change timestamp file name and display on frontend
+
 ## 1.2.7
 - Make backup process create a timestamp file
 
