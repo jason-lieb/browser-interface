@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build:internal": "npm run lint && npm run tsc && vite build",
+    "build:ci": "vite build",
     "build": "./scripts/build.sh && npm run build:internal && ./scripts/rename-helpers.sh",
     "preview": "vite preview",
     "lint": "eslint src && eslint service-worker",
