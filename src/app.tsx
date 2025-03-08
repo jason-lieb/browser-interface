@@ -7,9 +7,13 @@ import {useDirectoryHandle, useNavPage} from './store'
 import {clearDirectory, selectDirectory} from './utils/directory'
 import {catchError} from './utils/error'
 import {getDirectoryHandle} from './utils/indexed-db'
+import {Messages} from './utils/message'
+import {MessagesT} from './utils/message'
 import {pinTab} from './utils/pin-tab'
 import {saveWindow} from './utils/save-window'
 import {storeBackupDirectory} from './utils/store-backup-directory'
+
+let exhaustiveCheck: never
 
 export function App() {
   const {directoryHandle, setDirectoryHandle} = useDirectoryHandle()
@@ -18,19 +22,23 @@ export function App() {
   const [pinSetting, setPinSetting] = useState(false)
   const [requestPermissionModalOpen, setRequestPermissionModalOpen] = useState(false)
   const {navPage, setNavPage} = useNavPage()
-
+  const [backupLoading, setBackupLoading] = useState(false)
   useEffect(() => {
-    const messageHandler = (message: string) => {
+    const messageHandler = (message: MessagesT) => {
       switch (message) {
-        case 'Request Permission':
+        case Messages.RequestPermission:
           if (directoryHandle) setRequestPermissionModalOpen(true)
           break
-        case 'Changed Directory Handle':
-        case 'Changed Backup Directory':
-        case 'Manually Run Backup':
+        case Messages.BackupCompleted:
+          setBackupLoading(false)
+          break
+        case Messages.ChangedDirectoryHandle:
+        case Messages.ChangedBackupDirectory:
+        case Messages.ManuallyRunBackup:
           break
         default:
-          console.log('Unexpected message: ', message)
+          exhaustiveCheck = message
+          console.log('Unexpected message: ', exhaustiveCheck)
       }
     }
     chrome.runtime.onMessage.addListener(messageHandler)
@@ -139,6 +147,8 @@ export function App() {
               clearBackupDirectory={clearBackupDirectory}
               pinSetting={pinSetting}
               setPinSetting={setPinSetting}
+              backupLoading={backupLoading}
+              setBackupLoading={setBackupLoading}
             />
           ) : (
             <SavePage

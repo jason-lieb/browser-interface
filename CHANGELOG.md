@@ -1,5 +1,12 @@
 # CHANGELOGS
 
+## 1.2.9
+- Sort directories and files in browse page in alphabetical order
+- Open links in new tabs
+- Make "Manually Run Backup" button have loading state
+- Fix parsing errors when there is brackets or parenthesis in a tab's title
+- Update Readme
+
 ## 1.2.8
 - Change timestamp file name and display on frontend
 

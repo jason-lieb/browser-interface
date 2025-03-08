@@ -26,8 +26,10 @@ export function BrowsePage({backupDirectory}: Props) {
     getDirectoryEntries(directoryHandle!, currentDirectory)
       .then(result => {
         const [directories, files] = result
-        setDirectories(directories)
-        setFiles(files)
+        const sortedDirectories = directories.toSorted((a, b) => a[0].localeCompare(b[0]))
+        const sortedFiles = files.toSorted((a, b) => a[0].localeCompare(b[0]))
+        setDirectories(sortedDirectories)
+        setFiles(sortedFiles)
       })
       .catch(error => {
         console.error('getDirectoryEntriesError: ', error)
@@ -269,7 +271,7 @@ function Tab({title, url, favIconUrl}: TabT) {
             ) : (
               <div className="blank" />
             )}
-            <a href={url}>
+            <a href={url} target="_blank" rel="noopener noreferrer">
               <h6>{title}</h6>
             </a>
           </div>

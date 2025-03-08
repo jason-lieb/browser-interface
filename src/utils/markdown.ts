@@ -82,11 +82,11 @@ function extractFavIconUrl(column: string): string {
 }
 
 function extractTitle(column: string): string {
-  const match = column.match(/\[(.*?)\]/)
+  const match = column.match(/^\[(.*)\]\(/)
   return match ? match[1]! : ''
 }
 
 function extractUrl(column: string): string {
-  const match = column.match(/\((.*?)\)/)
+  const match = column.match(/\(([^()]*(?:\([^()]*\)[^()]*)*)\)$/)
   return match ? match[1]! : ''
 }

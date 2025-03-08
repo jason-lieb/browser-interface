@@ -10,6 +10,8 @@ type SettingProps = {
   clearBackupDirectory: () => void
   pinSetting: boolean
   setPinSetting: (pinSetting: boolean) => void
+  backupLoading: boolean
+  setBackupLoading: (backupLoading: boolean) => void
 }
 
 export function SettingsPage({
@@ -18,6 +20,8 @@ export function SettingsPage({
   clearBackupDirectory,
   pinSetting,
   setPinSetting,
+  backupLoading,
+  setBackupLoading,
 }: SettingProps) {
   const {directoryHandle, setDirectoryHandle} = useDirectoryHandle()
 
@@ -52,6 +56,8 @@ export function SettingsPage({
         backupDirectory={backupDirectory}
         setBackupDirectory={setBackupDirectory}
         clearBackupDirectory={clearBackupDirectory}
+        backupLoading={backupLoading}
+        setBackupLoading={setBackupLoading}
       />
       <hr />
       <br />
