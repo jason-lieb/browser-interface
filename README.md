@@ -62,6 +62,11 @@ Chrome / Chromium: go to `chrome://flags` and manually enable the following flag
 
 ## Screenshot
 
+### Save Page
 ![save page](./screenshots/save-screenshot.png)
+
+### Browse Page
 ![browse page](./screenshots/browse-screenshot.png)
+
+### Settings Page
 ![settings page](./screenshots/settings-screenshot.png)
