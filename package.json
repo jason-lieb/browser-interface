@@ -27,7 +27,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "babel-plugin-react-compiler": "^19.0.0-beta-b2e8e9c-20241220",
     "css-loader": "^6.10.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.22.0",
     "eslint-plugin-react-compiler": "^19.0.0-beta-b2e8e9c-20241220",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
