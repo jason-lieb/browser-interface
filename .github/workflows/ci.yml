@@ -21,3 +21,5 @@ jobs:
       - name: Typecheck
         run: npm run tsc
 
+      - name: Build
+        run: npm run build:internal
