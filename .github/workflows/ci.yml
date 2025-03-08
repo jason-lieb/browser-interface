@@ -12,6 +12,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Copy utils
+        run: ./scripts/build.sh
+
       - name: Lint
         run: npm run lint
 
