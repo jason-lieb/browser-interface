@@ -60,7 +60,7 @@ Chrome / Chromium: go to `chrome://flags` and manually enable the following flag
 
 2. `#file-system-observer`
 
-## Screenshot
+## Screenshots
 
 ### Save Page
 ![save page](./screenshots/save-screenshot.png)
