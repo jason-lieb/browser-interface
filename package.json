@@ -27,7 +27,7 @@
     "babel-plugin-react-compiler": "^19.0.0-beta-b2e8e9c-20241220",
     "css-loader": "^6.10.0",
     "eslint": "^8.57.0",
-    "eslint-plugin-react-compiler": "^19.0.0-beta-b2e8e9c-20241220",
+    "eslint-plugin-react-compiler": "^19.0.0-beta-40c6c23-20250301",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "typescript": "^5.3.3",
