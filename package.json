@@ -31,7 +31,7 @@
     "@typescript-eslint/parser": "^8.17.0",
     "@vitejs/plugin-react": "^4.3.4",
     "babel-plugin-react-compiler": "^19.0.0-beta-b2e8e9c-20241220",
-    "css-loader": "^6.10.0",
+    "css-loader": "^7.1.2",
     "eslint": "^9.22.0",
     "eslint-plugin-react-compiler": "^19.0.0-beta-40c6c23-20250301",
     "eslint-plugin-react-hooks": "^5.0.0",
