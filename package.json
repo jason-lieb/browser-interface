@@ -23,7 +23,7 @@
     "@eslint/js": "^9.22.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/chrome": "^0.0.310",
-    "@types/node": "^22.13.10",
+    "@types/node": "^22.15.30",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/wicg-file-system-access": "^2023.10.4",
