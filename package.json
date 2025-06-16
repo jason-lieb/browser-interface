@@ -28,7 +28,7 @@
     "@types/react-dom": "^19.0.0",
     "@types/wicg-file-system-access": "^2023.10.4",
     "@typescript-eslint/eslint-plugin": "^8.27.0",
-    "@typescript-eslint/parser": "^8.17.0",
+    "@typescript-eslint/parser": "^8.34.0",
     "@vitejs/plugin-react": "^4.3.4",
     "babel-plugin-react-compiler": "^19.0.0-beta-3229e95-20250315",
     "css-loader": "^7.1.2",
