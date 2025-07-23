@@ -28,9 +28,11 @@
             '';
 
             installPhase = ''
-              zip -r browser-interface.zip dist
+              cd dist
+              zip -r ../browser-interface.zip .
+              cd ..
               mkdir -p $out
-              cp browser-interface.zip $out/browser-interface.zip
+              cp browser-interface.zip $out
             '';
 
             nativeBuildInputs = [
