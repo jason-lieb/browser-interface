@@ -18,9 +18,9 @@
         packages = {
           default = pkgs.buildNpmPackage {
             pname = "browser-interface";
-            version = "1.2.9";
+            version = "1.2.10";
             src = ./.;
-            npmDepsHash = "sha256-L3Lw5nL5q28GU1QjNGpDeWPM/ywjvKZAH1FoDsMcDRU=";
+            npmDepsHash = "sha256-eg391fwoDMmgoaB5DIglbA+qHcAyDWirPXbqtHJc8gM=";
 
             buildPhase = ''
               ${builtins.readFile ./scripts/build.sh}

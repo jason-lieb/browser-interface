@@ -5,7 +5,8 @@ export async function selectDirectory(
   setDirectoryHandle: (directoryHandle: FileSystemDirectoryHandle) => void
 ) {
   const {data: directoryHandle, error} = await catchError(window.showDirectoryPicker())
-  if (error) throw new Error(`window.showDirectoryPicker: ${error}`)
+  if (error)
+    throw new Error("Cannot access user's file system, please add the necessary browser flags")
 
   const {data: storedDirectoryHandle, error: storeDirectoryHandleError} = await catchError(
     storeDirectoryHandle(directoryHandle)
