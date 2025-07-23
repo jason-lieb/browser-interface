@@ -23,3 +23,27 @@ jobs:
 
       - name: Build
         run: npm run build:ci
+
+  nix-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Build with Nix
+        run: nix build .#default
+
+      - name: Verify build output
+        run: |
+          ls -la result/
+          unzip -l result/browser-interface.zip
+          unzip -q result/browser-interface.zip -d /tmp/extracted
+          ls -la /tmp/extracted/
+          test -f /tmp/extracted/manifest.json
+          echo "✅ Nix build verification passed - manifest.json found"
